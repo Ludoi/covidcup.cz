@@ -1,0 +1,24 @@
+{
+    "name": "ludoi/resultado",
+    "description": "Description of project resultado.",
+    "authors": [
+        {
+            "name": "Ludek Bednarz",
+            "email": "ludek.bednarz@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://bitbucket.org/ludoi/utils.git"
+        }
+    ],
+    "require": {
+        "nette/nette": "3.0.*",
+        "nextras/datagrid": "3.1.*",
+        "twbs/bootstrap": "~4",
+        "ludoi/utils": "^0.2",
+        "vrana/adminer": "*",
+        "ublaboo/api-router": "3.0.*"
+    }
+}

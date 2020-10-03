@@ -1,0 +1,7 @@
+/temp/
+/log/
+/vendor/
+/nbproject/
+/app/config/config.local.neon
+composer.lock
+.idea/

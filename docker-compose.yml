@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  nginx:
+    container_name: nginx-covidcup
+    restart: always
+    build:
+      context: .docker/nginx
+    volumes:
+      - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - .docker/nginx/sites/:/etc/nginx/sites-available
+      - .docker/nginx/conf.d/:/etc/nginx/conf.d
+    networks:
+      - proxy
+    expose:
+      - 80
+      - 443
+    tty: true
+    environment:
+      VIRTUAL_HOST: covidcup.cz, www.covidcup.cz
+      LETSENCRYPT_HOST: covidcup.cz, www.covidcup.cz
+      LETSENCRYPT_EMAIL: ludek.bednarz@gmail.com
+
+networks:
+  proxy:
+    external:
+      name: nginx-proxy
