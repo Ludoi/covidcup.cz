@@ -4,4 +4,4 @@
 /nbproject/
 /app/config/config.local.neon
 composer.lock
-.idea/
+/.idea/

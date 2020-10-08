@@ -6,7 +6,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: .docker/php/Dockerfile
+      dockerfile: .docker/php/Dockerfile.dev
     volumes:
       - .:/var/www/app
       - .docker/conf/php/php.ini:/usr/local/etc/php/php.ini
@@ -35,8 +35,8 @@ services:
     links:
       - php
     environment:
-      VIRTUAL_HOST: $WEB_NAME
-      LETSENCRYPT_HOST: $WEB_NAME
+      VIRTUAL_HOST: covidcup.local
+      LETSENCRYPT_HOST: covidcup.local
       LETSENCRYPT_EMAIL: $EMAIL
 
   composer:

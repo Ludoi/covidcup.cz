@@ -1,0 +1,1 @@
+docker exec php-resultado composer update -d /var/www

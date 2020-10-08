@@ -1,0 +1,1 @@
+docker exec php-resultado php -f /var/www/vendor/bin/phpstan.phar analyse -l 4 -c /var/www/phpstan.neon /var/www/app
