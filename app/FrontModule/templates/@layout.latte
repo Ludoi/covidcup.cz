@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs">
+   <head>
+     <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-444081-12"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-444081-12');
+      </script>
+       <link rel="stylesheet" href="/www/css/bootstrap.min.css" media="screen">
+       <link rel="stylesheet" href="/www/css/custom.css" media="screen">
+
+      <title>Covidcup :: {block title|stripTags|strip}Hlavně se z toho neposrat!{/block}</title>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+      <meta name="description" content="{include #description|striptags|strip}" />
+      <meta name="keywords" content="Covidcup, běh, běh do vrchu, vrchy, Beskydy, zimní pohár, Lysá hora" />
+      <link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+         {block head}{/block}
+   </head>
+   <body>
+        <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+           <div class="container">
+               <a href="../" class="navbar-brand">Covidcup</a>
+               <div class="collapse navbar-collapse" id="navbarResponsive">
+               <ul class="navbar-nav ml-auto">
+                   <li n:class="$presenter->isLinkCurrent('Registration:default')?active, nav-item">
+                       <a class="nav-link" n:href="Registration:default">Registrovat se</a>
+                   </li>
+                   <li n:class="nav-item">
+                       <a class="nav-link" href="">Statistiky</a>
+                   </li>
+                   <li n:class="$presenter->isLinkCurrent('Homepage:rules')?active, nav-item">
+                       <a class="nav-link" n:href="Homepage:rules">Pravidla</a>
+                   </li>
+                   <li class="nav-item text-warning">
+                       <a class="nav-link" href="">Přihlásit se</a>
+                   </li>
+               </ul>
+               </div>
+           </div>
+       </nav>
+
+        <header class="masthead">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col-12 text-center">
+                        <h1 class="font-weight-light">Covidcup</h1>
+                        <p class="lead">Hlavně se z toho neposrat!</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="container clearfix">
+            {include #content}
+        </div>
+   </body>
+</html>

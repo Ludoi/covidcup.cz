@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace FrontModule;
 
 /**
- * Homepage presenter.
+ * Registration presenter.
  *
  * @author     Luděk Bednarz
  * @package    Covidcup
  */
-class HomepagePresenter extends BasePresenter {
+class RegistrationPresenter extends BasePresenter {
 
 }

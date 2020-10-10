@@ -24,3 +24,4 @@ services:
 #		authenticator: App\Authenticate
 		routerFactory: App\RouterFactory
 		router: @routerFactory::createRouter
+		users: App\Users

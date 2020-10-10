@@ -1,0 +1,52 @@
+{block content}
+<div class="page-header" id="banner">
+    <div class="row">
+        <div class="col-lg-6 col-md-7 col-sm-6">
+      <h1 n:block="title">Covidcup :: Registrace</h1>
+            <div class="bs-component">
+            <fieldset>
+                <legend>Vyplň následující údaje</legend>
+            <div class="form-group">
+                <label for="username">Uživatelské jméno</label>
+                <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Uživatelské jméno">
+            </div>
+            <div class="form-group">
+                <label for="firstname">Jméno</label>
+                <input type="text" class="form-control" id="firstname" aria-describedby="firstnameHelp" placeholder="Jméno">
+            </div>
+            <div class="form-group">
+                <label for="lastname">Příjmení</label>
+                <input type="text" class="form-control" id="lastname" aria-describedby="lastnameHelp" placeholder="Příjmení">
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="E-mailová adresa">
+            </div>
+            <div class="form-group">
+                <label for="year">Rok narození</label>
+                <input type="number" class="form-control" id="year" aria-describedby="yearHelp" placeholder="Rok narození">
+            </div>
+            <div class="form-group">
+                <select class="custom-select">
+                    <option selected>Vyber pohlaví</option>
+                    <option value="f">žena</option>
+                    <option value="m">muž</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="password">Heslo</label>
+                <input type="password" class="form-control" id="password" placeholder="Heslo">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Registrovat</button>
+            </div>
+            </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block description}
+    Covidcup
+{/block}

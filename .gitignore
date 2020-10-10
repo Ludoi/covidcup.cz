@@ -5,3 +5,4 @@
 /app/config/config.local.neon
 composer.lock
 /.idea/
+/.docker/.idea/
