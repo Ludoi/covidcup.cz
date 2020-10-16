@@ -39,6 +39,19 @@ services:
       LETSENCRYPT_HOST: $WEB_NAME
       LETSENCRYPT_EMAIL: $EMAIL
 
+  php-email:
+    container_name: php-email-$PROJECT_NAME
+    restart: always
+    build:
+      context: .
+      dockerfile: .docker/php-email/Dockerfile.dev
+    volumes:
+      - .:/var/www/app
+      - .docker/conf/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - database
+      - rabbitmq-network
+
   composer:
     container_name: composer-$PROJECT_NAME
     image: composer:latest
@@ -54,3 +67,6 @@ networks:
   database:
     external:
       name: database-network
+  rabbitmq-network:
+    external:
+      name: rabbitmq-network
