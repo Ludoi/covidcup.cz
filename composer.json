@@ -19,6 +19,15 @@
         "twbs/bootstrap": "~4",
         "ludoi/utils": "^0.2",
         "vrana/adminer": "*",
-        "ublaboo/api-router": "3.0.*"
+        "ublaboo/api-router": "3.0.*",
+        "contributte/rabbitmq": "^7",
+        "contributte/console": "^0.8",
+        "contributte/forms-bootstrap": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-nette": "^0.12",
+        "phpstan/phpstan-strict-rules": "^0.12"
     }
 }

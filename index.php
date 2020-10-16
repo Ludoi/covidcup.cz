@@ -8,11 +8,10 @@ define('WWW_DIR', __DIR__);
 // absolute filesystem path to the application root
 define('APP_DIR', WWW_DIR . '/app');
 
+require APP_DIR . '/Bootstrap.php';
 require WWW_DIR . '/vendor/autoload.php';
 
-// Let bootstrap create Dependency Injection container.
-$container = require __DIR__ . '/app/bootstrap.php';
-
-// Run application.
-$application = $container->getService('application');
+$configurator = \App\Bootstrap::boot();
+$container = $configurator->createContainer();
+$application = $container->getByType(Nette\Application\Application::class);
 $application->run();

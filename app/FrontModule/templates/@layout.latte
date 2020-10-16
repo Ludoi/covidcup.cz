@@ -1,60 +1,73 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs">
-   <head>
-     <!-- Global site tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-444081-12"></script>
-      <script>
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-444081-12"></script>
+    <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
 
         gtag('config', 'UA-444081-12');
-      </script>
-       <link rel="stylesheet" href="/www/css/bootstrap.min.css" media="screen">
-       <link rel="stylesheet" href="/www/css/custom.css" media="screen">
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/www/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="/www/css/custom.css" media="screen">
 
-      <title>Covidcup :: {block title|stripTags|strip}Hlavně se z toho neposrat!{/block}</title>
-      <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-      <meta name="description" content="{include #description|striptags|strip}" />
-      <meta name="keywords" content="Covidcup, běh, běh do vrchu, vrchy, Beskydy, zimní pohár, Lysá hora" />
-      <link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
-         {block head}{/block}
-   </head>
-   <body>
-        <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
-           <div class="container">
-               <a href="../" class="navbar-brand">Covidcup</a>
-               <div class="collapse navbar-collapse" id="navbarResponsive">
-               <ul class="navbar-nav ml-auto">
-                   <li n:class="$presenter->isLinkCurrent('Registration:default')?active, nav-item">
-                       <a class="nav-link" n:href="Registration:default">Registrovat se</a>
-                   </li>
-                   <li n:class="nav-item">
-                       <a class="nav-link" href="">Statistiky</a>
-                   </li>
-                   <li n:class="$presenter->isLinkCurrent('Homepage:rules')?active, nav-item">
-                       <a class="nav-link" n:href="Homepage:rules">Pravidla</a>
-                   </li>
-                   <li class="nav-item text-warning">
-                       <a class="nav-link" href="">Přihlásit se</a>
-                   </li>
-               </ul>
-               </div>
-           </div>
-       </nav>
-
-        <header class="masthead">
-            <div class="container h-100">
-                <div class="row h-100 align-items-center">
-                    <div class="col-12 text-center">
-                        <h1 class="font-weight-light">Covidcup</h1>
-                        <p class="lead">Hlavně se z toho neposrat!</p>
-                    </div>
-                </div>
+    <title>Covidcup :: {block title|stripTags|strip}Hlavně se z toho neposrat!{/block}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="description" content="{include #description|striptags|strip}"/>
+    <meta name="keywords" content="Covidcup, běh, běh do vrchu, vrchy, Beskydy, zimní pohár, Lysá hora"/>
+    <link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+    {block head}{/block}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+        <div class="container">
+            <a href="../" class="navbar-brand">Covidcup</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                    aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li n:class="$presenter->isLinkCurrent('Homepage:rules')?active, nav-item">
+                        <a class="nav-link" n:href="Homepage:rules">Co to je?</a>
+                    </li>
+                    <li n:class="$presenter->isLinkCurrent('Registration:default')?active, nav-item">
+                        <a class="nav-link" n:href="Registration:default">Registrovat se</a>
+                    </li>
+                    <li n:class="nav-item">
+                        <a class="nav-link" n:href="Statistics:default">Statistiky</a>
+                    </li>
+                    <li class="nav-item text-warning">
+                        <a class="nav-link" n:href="Sign:default">Přihlásit se</a>
+                    </li>
+                </ul>
             </div>
-        </header>
-        <div class="container clearfix">
-            {include #content}
         </div>
-   </body>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-7 col-sm-6">
+               <div n:foreach="$flashes as $flash" class="alert alert-{$flash->type}">{$flash->message}</div>
+            </div>
+        </div>
+    </div>
+{include #content}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+</body>
 </html>

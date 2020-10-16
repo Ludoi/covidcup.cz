@@ -21,8 +21,8 @@ abstract class Table
     /** @var Context */
     protected Context $connection;
 
-    /** @var string */
-    protected string $tableName;
+    /** @var string|null */
+    protected ?string $tableName = null;
 
     protected array $cache = array();
     
@@ -34,7 +34,7 @@ abstract class Table
     {
         $this->connection = $db;
         
-        if ($this->tableName === null) {
+        if (is_null($this->tableName)) {
             $class = get_class($this);
             throw new InvalidStateException("Název tabulky musí být definován v $class::\$tableName.");
         }
@@ -86,9 +86,9 @@ abstract class Table
     /**
      * Vrací záznam s daným primárním klíčem
      * @param int $id
-     * @return ActiveRow|false
+     * @return ActiveRow|null
      */
-    public function find($id)
+    public function find($id): ?ActiveRow
     {
        if (!isset($this->cache[$id])) {
           $this->cache[$id] = $this->getTable()->get($id);

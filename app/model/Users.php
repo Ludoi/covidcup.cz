@@ -17,48 +17,62 @@ use Nette\Utils\Strings;
  */
 class Users extends Table {
 
-    protected string $tableName = 'users';
+    protected ?string $tableName = 'users';
     
-    public function getUser(string $user): ActiveRow {
-        $username = Strings::lower($user);        
-        return $this->find($username);
+    public function getUser(string $email): ?ActiveRow {
+        return $this->findOneBy(['email' => Strings::lower($email)]);
     }
 
-    public function setPassword(string $user, string $password) {
-        $username = Strings::lower($user);
+    public function checkPassword(string $email, string $password): bool {
+        $user = $this->findOneBy(['email' => $email]);
+        if (!is_null($user)) {
+            $pwd = new Passwords();
+            return $pwd->verify($password, (string)$user->hash);
+        } else {
+            return false;
+        }
+    }
+
+    public function setPassword(string $email, string $password) {
         $now = new DateTime;
         $pwd = new Passwords();
         $hash = $pwd->hash($password);
-        $this->find($username)->update(array('password' => $hash, 'forgotten' => false,
+        $this->findOneBy(['email' => Strings::lower($email)])->update(array('hash' => $hash, 'forgotten' => false,
             'forgotten_requested' => null, 'initial' => null, 'updated' => $now));
     }
 
-    public function activate(string $user, bool $activate) {
-        $username = Strings::lower($user);
+    public function activate(string $email, bool $activate) {
         $now = new DateTime;
-        $this->find($username)->update(array('active' => $activate, 'updated' => $now));
+        $this->findOneBy(['email' => Strings::lower($email)])->update(['active' => $activate, 'updated' => $now,
+            'initial' => null, 'token' => null]);
     }
 
-    public function forgottenPassword(string $user) {
-        $username = Strings::lower($user);
-        $now = new DateTime;
-        $initial = Random::generate(50);
-        $this->find($username)->update(array('forgotten' => true, 'forgotten_requested' => $now,
-            'initial' => $initial));
+    public function remove(string $email) {
+        $this->findOneBy(['email' => Strings::lower($email)])->delete();
     }
 
-    public function newUser(string $user, string $name, string $surname, string $email, int $year, string $gender, string $roles): string {
-        $username = Strings::lower($user);
+    public function forgottenPassword(string $email): string {
+        $now = new DateTime;
+        $initial = Random::generate(100);
+        $token =  Random::generate(100);
+        $this->findOneBy(['email' => Strings::lower($email)])->update(['forgotten' => true, 'forgotten_requested' => $now,
+            'initial' => $initial, 'token' => $token]);
+        return $initial;
+    }
+
+    public function newUser(string $email, string $nickname, string $name, string $surname, int $year, string $gender,
+                            string $roles, bool $active): array {
         $now = new DateTime;
         $password = Random::generate(20);
+        $initial = Random::generate(100);
         $pwd = new Passwords();
         $hash = $pwd->hash($password);
-        $data = array('uname' => $username, 'firstname' => Strings::capitalize($name),
-            'lastname' => Strings::capitalize($surname), 'email' => Strings::lower($email),
-            'year' => $year, 'gender' => $gender, 'roles' => $roles,
-            'created' => $now, 'password' => $hash, 'active' => true);
+        $data = array('email' => Strings::lower($email), 'firstname' => Strings::capitalize($name),
+            'lastname' => Strings::capitalize($surname), 'nickname' => Strings::capitalize($nickname),
+            'year' => $year, 'gender' => $gender, 'roles' => $roles, 'initial' => $initial,
+            'created' => $now, 'hash' => $hash, 'active' => $active);
         $this->insert($data);
-        return $password;
+        return [ $password, $initial ];
     }
 
 }

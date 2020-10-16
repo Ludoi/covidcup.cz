@@ -45,7 +45,7 @@ services:
     volumes:
       - ./:/app
     working_dir: /app
-    command: composer install --ignore-platform-reqs
+    command: composer update --ignore-platform-reqs --no-dev
 
 networks:
   proxy:

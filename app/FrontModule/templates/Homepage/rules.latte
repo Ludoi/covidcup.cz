@@ -1,14 +1,134 @@
 {block content}
-<div class="bs-docs-section">
-    <div class="row">
-        <div class="col-lg-12 col-md-7 col-sm-6">
-            <h4 n:block="title">Pravidla</h4>
-            <p class="text-body">
-                Budou!
-            </p>
+    <div class="container clearfix">
+        <div class="bs-docs-section">
+            <div class="row">
+                <div class="col-lg-12 col-md-7 col-sm-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="card-title" n:block="title">Co to je?</h3>
+                            <p class="card-text">
+                                Je tu podzim, začne zima a my jsme byli už devatenáct let zvyklí na <a
+                                        href="https://lysacup.cz">Lysacup</a>.
+                                Tento podzim je jiný. I pro vás. A tak je tu <a n:href="Homepage:rules">tohle</a>.
+                                Stejně
+                                byste neseděli doma na prdeli, ale byli v horách.
+                                Tak proč si to nezpestřit? Máme tu pro vás soutěž, běžce by mohla potěšit, a milovníkům
+                                statistik by mohla přinést zábavu ;-)</p>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">Co tě čeká?</h4>
+                            <p class="card-text">
+                                Když se <a n:href="Registration:default">zaregistruješ</a>, můžeš si zasoutěžit.
+                                Pravidla
+                                jsou jednoduchá:
+                            <ol>
+                                <li>V daném časovém rozmezí si vyber trasu</li>
+                                <li>Doprav se na start, po trase se dostaň do cíle a sám si <a href="#time">změř čas</a>
+                                    (a
+                                    zadej si ho tady na web)
+                                </li>
+                                <li>Opakuj body 1 až 2 libovolný počet krát</li>
+                                <li>Zdolej co nejvíce tras v co nejlepším čase</li>
+                                <li>Každou trasu můžeš absolvovat vícekrát - do celkových výsledků se započítá
+                                    nejlepší
+                                </li>
+                                <li>Buď poctivý(á) a běhej po značené turistické značce a předepsané trase</li>
+                            </ol>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">Kdy se to bude konat?</h4>
+                            <p class="card-text">1.11.2020 - 31.12.2020</p>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">Kudy???</h4>
+                            <p class="card-text">
+                            <ul>
+                                <li n:foreach="$routes as $route">
+                                    <a n:href="Route:default, $route->id">{$route->description}</a></li>
+                            </ul>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">Časté otázky:</h4>
+                            <a name="time"></a>
+                            <h5>Jak si změřím čas?</h5>
+                            <p class="card-text">
+                                Existuje zařízení zvané hodinky. Použij je! A čas si tu pak zadej!
+                            </p>
+                            <p class="card-text">
+                                Druhá možnost je použít aplikaci na těchto stránkách a start i cíl si odmáčknout v ní.
+                                Jediné, co
+                                pak potřebuješ je mobil s daty.
+                            </p>
+                            <h5>Proč tam sakra není Krásná?</h5>
+                            <p class="card-text">
+                                Abys mi musel napsat, Kurri!
+                            </p>
+                            <h5>Potkám tam Hudyho, Vlaďku nebo Luďu?</h5>
+                            <p class="card-text">
+                                Asi někdy jo.
+                            </p>
+                            <h5>Bude to tam pípat jako v sámošce?</h5>
+                            <p class="card-text">
+                                Asi ne.
+                            </p>
+                            <h5>Co se bude hodnotit?</h5>
+                            <p class="card-text">
+                                Časy, počty, kilometry, metry, ... Však to znáš. Něco vymyslíme.
+                            </p>
+                            <h5>Musím být účastníkem Lysacupu abych se přidal(a)?</h5>
+                            <p class="card-text">
+                                Ne.
+                            </p>
+                            <h5>Můžu podvádět?</h5>
+                            <p class="card-text">
+                                Proč se ptáš?
+                            </p>
+                            <h5>Můžu tam jít ve čtvrtek?</h5>
+                            <p class="card-text">
+                                I v pátek. V sobotu. V neděli. V pondělí. Prostě kdykoliv.
+                            </p>
+                            <h5>Můžu běžet i někam jinam?</h5>
+                            <p class="card-text">
+                                Můžeš. Ale pak si to sem nepiš.
+                            </p>
+                            <h5>Kolik mě to bude stát?</h5>
+                            <p class="card-text">
+                                Co???
+                            </p>
+                            <h5>Musím to běhat?</h5>
+                            <p class="card-text">
+                                Nemusíš, Majko!
+                            </p>
+                            <h5>A budou nějaké ceny?</h5>
+                            <p class="card-text">
+                                A platil(a) jsi něco? :-D Ale ne, děláme si srandu. Na nějaké závěrečné Lysacupu vítěze
+                                vyhlásíme.
+                            </p>
+                            <h5>Kde se můžu zaregistrovat?</h5>
+                            <p class="card-text">
+                                <a class="btn btn-primary" n:href="Registration:default">Přece tady!</a>
+                            </p>
+                            <p class="text-warning">
+                                Nechceme porušovat nařízení ministra zdravotnictví, takže se, prosím, řiďte pokyny
+                                ohledně
+                                shlukování a rouškování
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {/block}
 
 {block description}

@@ -13,6 +13,20 @@ services:
     networks:
       - database
       - proxy
+      - rabbitmq-network
+
+  php-email:
+    container_name: php-email-$PROJECT_NAME
+    restart: always
+    build:
+      context: .
+      dockerfile: .docker/php-email/Dockerfile.dev
+    volumes:
+      - .:/var/www/app
+      - .docker/conf/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - database
+      - rabbitmq-network
 
   nginx:
     container_name: nginx-$PROJECT_NAME
@@ -45,7 +59,7 @@ services:
     volumes:
       - ./:/app
     working_dir: /app
-    command: composer install --ignore-platform-reqs
+    command: composer update --ignore-platform-reqs
 
 networks:
   proxy:
@@ -54,3 +68,6 @@ networks:
   database:
     external:
       name: database-network
+  rabbitmq-network:
+    external:
+      name: rabbitmq-network

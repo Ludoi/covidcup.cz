@@ -30,4 +30,7 @@ RUN if [ $WITH_XDEBUG = "true" ] ; then \
 WORKDIR /var/www/app
 RUN chown -R www-data:www-data /var/www/app
 
-EXPOSE 9000
+COPY ./.docker/conf/php-email/supervisord.conf /etc/supervisor
+COPY ./.docker/conf/supervisor/* /etc/supervisor/conf.d
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

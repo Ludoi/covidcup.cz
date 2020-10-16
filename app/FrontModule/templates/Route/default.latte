@@ -1,0 +1,45 @@
+{block content}
+    <div class="container clearfix">
+        <div>
+            <div class="bs-docs-section">
+                <div class="row">
+                    <div class="col-lg-8 col-md-7 col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title" n:block='title'>{$route->description}</h4>
+                                <p class="card-text">
+                                <dl>
+                                    <dt>Místo startu</dt>
+                                    <dd>{$route->ref('point_from')->name}</dd>
+                                    <dt>Místo cíle</dt>
+                                    <dd>{$route->ref('point_to')->name}</dd>
+                                    <dt>Délka</dt>
+                                    <dd>{$route->length} km</dd>
+                                    <dt>Převýšení</dt>
+                                    <dd>{$route->height} m</dd>
+                                    <dt>Mapa</dt>
+                                    <dd><a n:tag-if="$route->map_link" href="{$route->map_link}">na Cykloserveru</a>
+                                    </dd>
+                                </dl>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Další trasy</h4>
+                                <p class="card-text">
+                                <li n:foreach="$routes as $row">
+                                    <a n:href="Route:default, $row->id">{$row->description}</a></li>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block description}
+    Covidcup
+{/block}

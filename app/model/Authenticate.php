@@ -19,7 +19,7 @@ use Nette\Utils\Strings;
  */
 class Authenticate implements IAuthenticator
 {
-    use Nette\SmartObject;
+    use \Nette\SmartObject;
     
     public Context $connection;
 
@@ -33,17 +33,17 @@ class Authenticate implements IAuthenticator
         list($username, $password) = $credentials;
         $username = Strings::lower($username);
         $row = $this->connection->table('users')
-            ->where('username', $username)->fetch();
+            ->where('email', $username)->fetch();
 
-        if (!$row) {
-            throw new AuthenticationException('User not found.');
+        if (is_null($row)) {
+            throw new AuthenticationException('Neplatné přihlášení.');
         }
 
         $authenticate = new Passwords();
-        if (!$authenticate->verify($password, $row->password)) {
-            throw new AuthenticationException('Invalid password.');
+        if (!$authenticate->verify($password, $row->hash)) {
+            throw new AuthenticationException('Neplatné přihlášení.');
         }
 
-        return new Identity($row->uname, $row->roles);
+        return new Identity($row->email, $row->roles);
     }
 }

@@ -1,9 +1,24 @@
 {block content}
-<div class="page-header" id="banner">
-    <div class="row">
-        <p class="text-body">Ve výstavbě!</p>
+    <div class="container clearfix">
+        <div class="bs-docs-section">
+            <div class="row">
+                <div class="col-lg-12 col-md-7 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title" n:block="title">Registrace</h3>
+                            <p class="card-text small">Pokud vyplníš přezdívku, bude ve výsledcích zobrazená ona.</p>
+                            <p class="card-text small">Přes email se budeš přihlašovat, takže může být použit jen jednou.</p>
+                            <p class="card-text small">I když po tobě chceme email, nikomu ho nedáme. Ani ho nezneužijeme.
+                                To slibujeme!</p>
+                            <div class="card-text">
+                                {control registration}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 {/block}
 
 {block description}

@@ -1,10 +1,10 @@
 parameters:
 
 php:
-		date.timezone: Europe/Prague
+	date.timezone: Europe/Prague
 
 application:
-		errorPresenter: Error
+	errorPresenter: Error
 
 database:
 	default:
@@ -12,16 +12,75 @@ database:
 		user: %database.user%
 		password: %database.password%
 		reflection: discovered
-		autowired: TRUE
+		autowired: true
+
+mail:
+	smtp: %mailer.smtp%
+	host: %mailer.host%
+	port: %mailer.port%
+	username: %mailer.username%
+	password: %mailer.password%
+	secure: %mailer.secure%
+
 session:
-		expiration: 14 days
+	autoStart: true
+	gc_maxlifetime: 1209600
+
+extensions:
+	rabbitmq: Contributte\RabbitMQ\DI\RabbitMQExtension
+	console: Contributte\Console\DI\ConsoleExtension(true)
 
 services:
-		loggerHandler: Ludoi\Logger\Handler\FileHandler(%logger.folder%)
-		logger: Ludoi\Logger\Logger(@loggerHandler)
-		database: @Nette\Database\Context
-		cache: @Nette\Caching\IStorage
-#		authenticator: App\Authenticate
-		routerFactory: App\RouterFactory
-		router: @routerFactory::createRouter
-		users: App\Users
+	loggerHandler: Ludoi\Logger\Handler\FileHandler(%logger.folder%)
+	logger: Ludoi\Logger\Logger(@loggerHandler)
+	database: @Nette\Database\Context
+	cache: @Nette\Caching\IStorage
+	authenticator: App\Authenticate
+	routerFactory: App\RouterFactory
+	router: @routerFactory::createRouter
+	users: App\Users
+	points: App\Points
+	routes: App\Routes
+	- App\EmailConsumer
+	- App\EmailQueue(@Contributte\RabbitMQ\Client::getProducer(emailProducer))
+
+rabbitmq:
+	connections:
+		default:
+			user: %rabbitconf.user%
+			password: %rabbitconf.password%
+			host: rabbitmq-main
+			port: 5672
+			vhost: covidcup
+			lazy: false
+
+	queues:
+		emailQueue:
+			connection: default
+			# force queue declare on first queue operation during request
+			autoCreate: true
+
+#	exchanges:
+#		emailExchange:
+#			connection: default
+#			type: fanout
+#			queueBindings:
+#				emailQueue:
+#					routingKey: testRoutingKey
+#			# force exchange declare on first exchange operation during request
+#			autoCreate: true
+
+	producers:
+		emailProducer:
+#			exchange: emailExchange
+			queue: emailQueue
+			contentType: application/json
+			deliveryMode: 2 # Producer::DELIVERY_MODE_PERSISTENT
+
+	consumers:
+		emailConsumer:
+			queue: emailQueue
+			callback: [@App\EmailConsumer, consume]
+			qos:
+				prefetchSize: 0
+				prefetchCount: 5

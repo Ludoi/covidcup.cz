@@ -25,7 +25,7 @@ abstract class BaseSignPresenter extends BasePresenter {
 
     protected function checkPermissions(string $where, string $what) {
         if (!$this->user->isAllowed($where, $what)) {
-            $this->flashMessage('Uživatel nemá oprávnění k akci', 'danger');
+            $this->flashMessage('Uživatel nemá k akci oprávnění.', 'danger');
             $this->redirect('Homepage:');
         }
     }
