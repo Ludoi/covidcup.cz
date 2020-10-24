@@ -1,0 +1,27 @@
+{if $user->isLoggedIn()}
+        <div class="card mb-3">
+            {if $addItem}
+                <div class="card-body">
+                    {control addItem}
+                </div>
+            {else}
+                {snippet}
+                    <div class="card-body">
+                        <h4 class="card-title" n:block='title'>Diskuse</h4>
+                        <p class="card-text">
+                        <dl>
+                            {foreach $items as $item}
+                                <dt class="text-light">{$item->created|date:'j.n.Y, H:i:s'}
+                                    <a href="{$presenter->link('Racer:default', $item->userid)}">{$item->ref('userid')->ref('userid')->nickname}</a>
+                                </dt>
+                                <dd>{$item->content}</dd>
+                            {/foreach}
+                        </dl>
+                        </p>
+                        {includeblock "pagination.latte"}
+                        <a n:href="addItem!" class="btn btn-primary">Přidat</a>
+                    </div>
+                {/snippet}
+            {/if}
+        </div>
+{/if}

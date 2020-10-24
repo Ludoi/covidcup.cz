@@ -1,0 +1,32 @@
+{if $user->isLoggedIn()}
+    {snippet}
+        <div class="card mb-3">
+            {if $changeItem}
+                <div class="card-body">
+                    <h4 class="card-title">Změna profilu</h4>
+                    {control changeProfile}
+                    <a n:href="Cancel!" class="btn btn-secondary">Zrušit</a>
+                </div>
+            {else}
+                <div class="card-body">
+                    <h4 class="card-title" n:block='title'>Tvůj profil</h4>
+                    <dl class="card-text">
+                        <dt>Jméno:</dt>
+                        <dd>{$userprofile->firstname}</dd>
+                        <dt>Příjmení:</dt>
+                        <dd>{$userprofile->lastname}</dd>
+                        <dt>Přezdívka:</dt>
+                        <dd>{$userprofile->nickname}</dd>
+                        <dt>Rok narození:</dt>
+                        <dd>{$userprofile->year}</dd>
+                        <dt>Pohlaví:</dt>
+                        <dd>{$userprofile->gender == 'f' ? 'žena' : 'muž'}</dd>
+                        <dt>E-mail:</dt>
+                        <dd>{$userprofile->email}</dd>
+                    </dl>
+                    <a n:href="Change!" class="btn btn-primary">Změnit</a> <a class="btn btn-secondary" href="{$presenter->link('Sign:changePassword')}">Změnit heslo</a>
+                </div>
+            {/if}
+        </div>
+    {/snippet}
+{/if}

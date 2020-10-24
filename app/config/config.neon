@@ -31,6 +31,7 @@ extensions:
 	console: Contributte\Console\DI\ConsoleExtension(true)
 
 services:
+	- App\AuthorizatorFactory::create
 	loggerHandler: Ludoi\Logger\Handler\FileHandler(%logger.folder%)
 	logger: Ludoi\Logger\Logger(@loggerHandler)
 	database: @Nette\Database\Context
@@ -41,8 +42,19 @@ services:
 	users: App\Users
 	points: App\Points
 	routes: App\Routes
+	chats: App\Chats
+	plans: App\Plans
+	cups: App\Cups
+	results: App\Results
+	usersChanges: App\UsersChanges
+	cupsRacers: App\CupsRacers
 	- App\EmailConsumer
 	- App\EmailQueue(@Contributte\RabbitMQ\Client::getProducer(emailProducer))
+	- App\ProfileControlFactory
+	- App\ChatControlFactory
+	- App\PlanControlFactory
+	- App\ResultEnterControlFactory
+	- App\ResultOrderControlFactory
 
 rabbitmq:
 	connections:

@@ -13,5 +13,8 @@ require WWW_DIR . '/vendor/autoload.php';
 
 $configurator = \App\Bootstrap::boot();
 $container = $configurator->createContainer();
+// set timezone for database
+$container->getService('database')->query("SET time_zone = ?;", date_default_timezone_get());
+
 $application = $container->getByType(Nette\Application\Application::class);
 $application->run();

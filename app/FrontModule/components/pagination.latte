@@ -1,0 +1,30 @@
+{if $lastPage > 1}
+    <nav aria-label="Stránkování">
+        <ul class="pagination">
+            <li n:class="$page <= 1 ? disabled, page-item">
+                <a class="page-link" n:href="page, 1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">První</span>
+                </a>
+            </li>
+            <li n:class="$page < 2 ? disabled, page-item">
+                <a class="page-link" n:href="page, $page > 1? $page - 1 : 1" aria-label="Previous">
+                    <span aria-hidden="true">&lt;</span>
+                    <span class="sr-only">Předchozí</span>
+                </a>
+            </li>
+            <li n:class="$page > $lastPage - 1 ? disabled, page-item">
+                <a class="page-link" n:href="page, $page < $lastPage? $page + 1 : $lastPage" aria-label="Previous">
+                    <span aria-hidden="true">&gt;</span>
+                    <span class="sr-only">Následující</span>
+                </a>
+            </li>
+            <li n:class="$page >= $lastPage ? disabled, page-item">
+                <a class="page-link" n:href="page, $lastPage" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Poslední</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{/if}

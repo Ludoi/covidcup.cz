@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace FrontModule;
 
+use App\Cups;
+use App\CupsRacers;
 use App\EmailQueue;
 use App\Users;
 use Contributte\FormsBootstrap\BootstrapForm;
@@ -24,11 +26,15 @@ class RegistrationPresenter extends BasePresenter
 {
     private Users $users;
     private EmailQueue $emailQueue;
+    private Cups $cups;
+    private CupsRacers $cupsRacers;
 
-    public function __construct(Users $users, EmailQueue $emailQueue)
+    public function __construct(Users $users, EmailQueue $emailQueue, Cups $cups, CupsRacers $cupsRacers)
     {
         $this->users = $users;
+        $this->cups = $cups;
         $this->emailQueue = $emailQueue;
+        $this->cupsRacers = $cupsRacers;
     }
 
     public function renderDefault()
@@ -42,7 +48,7 @@ class RegistrationPresenter extends BasePresenter
         if (!is_null($user)) {
             if (!$user->active) {
                 $this->template->initial = $initial;
-                $this->template->user = $user;
+                $this->template->userProfile = $user;
             } else {
                 $this->flashMessage('Účastník už je potvrzený.');
                 $this->redirect('Homepage:default');
@@ -62,7 +68,8 @@ class RegistrationPresenter extends BasePresenter
     {
         $user = $this->users->findOneBy(['initial' => $initial]);
         if (!is_null($user)) {
-            $this->users->activate((string)$user->email, true);
+            $this->users->activate((int)$user->id, true);
+            $this->cupsRacers->insert([ 'cupid' => $this->cups->getActive(), 'userid' => (int)$user->id ]);
             $this->flashMessage('Přihlášení dokončeno.', 'success');
         }
         $this->redirect('Homepage:default');
@@ -72,7 +79,7 @@ class RegistrationPresenter extends BasePresenter
     {
         $user = $this->users->findOneBy(['initial' => $initial]);
         if (!is_null($user)) {
-            $this->users->remove((string)$user->email);
+            $this->users->remove((int)$user->id);
             $this->flashMessage('Přihlášení smazáno.', 'success');
         }
         $this->redirect('Homepage:default');
@@ -95,7 +102,6 @@ class RegistrationPresenter extends BasePresenter
         $form->addSelect('gender', 'Pohlaví', array('m' => 'muž', 'f' => 'žena'))
             ->setPrompt('Vyber pohlaví')->setRequired('Vyplň pohlaví.');
         $form->addText('email', 'Email:', 50, 250)->addRule(Form::EMAIL)->setRequired();
-//        $form->addReCaptcha('recaptcha', $label = 'Captcha', $required = true, $message = 'Jsi robot?');
 
         $form->addSubmit('send', 'Přihlásit se');
 

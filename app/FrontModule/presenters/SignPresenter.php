@@ -39,7 +39,7 @@ class SignPresenter extends BasePresenter
     {
         if ($this->user->isLoggedIn()) {
             $this->flashMessage('Už jsi přihlášený(á) :-)');
-            $this->redirect('SignHomepage:');
+            $this->redirect('Homepage:');
         }
     }
     protected function createComponentSign()
@@ -62,12 +62,12 @@ class SignPresenter extends BasePresenter
             if ($values->remember) {
                 $this->presenter->getUser()->setExpiration('+ 14 days');
             } else {
-                $this->presenter->getUser()->setExpiration('+ 20 minutes');
+                $this->presenter->getUser()->setExpiration('+ 120 minutes');
             }
             $this->presenter->getUser()->login($values->email, $values->password);
 
             $this->presenter->restoreRequest($this->backlink);
-            $this->presenter->redirect('SignHomepage:');
+            $this->presenter->redirect('Homepage:');
         } catch (AuthenticationException $e) {
             $form->addError($e->getMessage());
         }
@@ -161,7 +161,7 @@ class SignPresenter extends BasePresenter
             } else if ($values->newPassword1 <> $values->newPassword2) {
                 $this->flashMessage('Hesla nejsou stejná.', 'danger');
             } else {
-                $this->users->setPassword((string)$user->email, $values->newPassword1);
+                $this->users->setPassword((int)$user->id, $values->newPassword1);
                 $this->flashMessage('Heslo změněno.', 'success');
             }
             $this->redirect('Homepage:');
@@ -203,7 +203,7 @@ class SignPresenter extends BasePresenter
         try {
             $values = $form->getValues();
 
-            $user = $this->users->findOneBy(['email' => $this->user->identity->getId()]);
+            $user = $this->users->find((int)$this->user->identity->getId());
             if (is_null($user)) {
                 $this->flashMessage('Uživatel nenalezen.', 'danger');
             } else if (!$user->active) {
@@ -211,11 +211,11 @@ class SignPresenter extends BasePresenter
             } else if ($values->newPassword1 <> $values->newPassword2) {
                 $form->addError('Nová hesla nesouhlasí.');
                 return;
-            } else if (!$this->users->checkPassword($this->user->identity->getId(), $values->currentPassword)) {
+            } else if (!$this->users->checkPassword((int)$this->user->identity->getId(), $values->currentPassword)) {
                 $form->addError('Původní heslo není správně.');
                 return;
             } else {
-                $this->users->setPassword((string)$this->user->identity->getId(), $values->newPassword1);
+                $this->users->setPassword((int)$this->user->identity->getId(), $values->newPassword1);
                 $this->flashMessage('Heslo změněno.', 'success');
             }
             $this->redirect('Homepage:');

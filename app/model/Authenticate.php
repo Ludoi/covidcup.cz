@@ -44,6 +44,6 @@ class Authenticate implements IAuthenticator
             throw new AuthenticationException('Neplatné přihlášení.');
         }
 
-        return new Identity($row->email, $row->roles);
+        return new Identity($row->id, $row->roles);
     }
 }
