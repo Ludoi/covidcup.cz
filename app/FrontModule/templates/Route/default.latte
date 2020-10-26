@@ -12,9 +12,9 @@
                                         <p class="card-text">
                                         <dl>
                                             <dt>Místo startu</dt>
-                                            <dd>{$route->ref('point_from')->name}</dd>
+                                            <dd>{$route->ref('point_from')->name} (GPS <a href="https://mapy.cz/#q={$route->ref('point_from')->latitude|number: 5},{$route->ref('point_from')->longitude|number: 5}">{$route->ref('point_from')->latitude|number: 5}, {$route->ref('point_from')->longitude|number: 5}</a>)</dd>
                                             <dt>Místo cíle</dt>
-                                            <dd>{$route->ref('point_to')->name}</dd>
+                                            <dd>{$route->ref('point_to')->name} (GPS <a href="https://mapy.cz/#q={$route->ref('point_to')->latitude|number: 5},{$route->ref('point_to')->longitude|number: 5}">{$route->ref('point_to')->latitude|number: 5}, {$route->ref('point_to')->longitude|number: 5}</a>)</dd>
                                             <dt>Délka</dt>
                                             <dd>{$route->length} km</dd>
                                             <dt>Převýšení</dt>
@@ -45,7 +45,7 @@
                                         <h4 class="card-title">Další trasy</h4>
                                         <p class="card-text">
                                         <li n:foreach="$routes as $row">
-                                            <a n:href="Route:default, $row->id">{$row->description}</a></li>
+                                            <a n:href="Route:default, $row->routeid">{$row->ref('routeid')->description}</a></li>
                                         </p>
                                     </div>
                                 </div>

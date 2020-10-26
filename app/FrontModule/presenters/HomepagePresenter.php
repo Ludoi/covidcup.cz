@@ -60,6 +60,6 @@ class HomepagePresenter extends BasePresenter {
     }
 
     public function actionRules() {
-        $this->template->routes = $this->routes->findAll();
+        $this->template->routes = $this->cups->find($this->cupid)->related('cups_routes');
     }
 }

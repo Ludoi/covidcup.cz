@@ -51,7 +51,7 @@
                             <p class="card-text">
                             <ul>
                                 <li n:foreach="$routes as $route">
-                                    <a n:href="Route:default, $route->id">{$route->description}</a></li>
+                                    <a n:href="Route:default, $route->routeid">{$route->ref('routeid')->description}</a></li>
                             </ul>
                             </p>
                         </div>

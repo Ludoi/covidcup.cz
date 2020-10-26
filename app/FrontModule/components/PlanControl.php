@@ -118,7 +118,7 @@ class PlanControl extends Control
         $cup = $this->cups->find($this->cupid);
         if (!is_null($cup)) {
             if ($values->plan_date->format('U') < $cup->valid_from->format('U') ||
-                $values->plan_data->format('U') > $cup->valid_to->format('U')) {
+                $values->plan_date->format('U') > $cup->valid_to->format('U')) {
                 $form['plan_date']->addError("Termín musí být v rozsahu {$cup->valid_from->format('j.n.Y, H:i')} a {$cup->valid_to->format('j.n.Y, H:i')}");
             } else {
                 $racerid = $this->cups->getRacerid($this->cupid, $this->userid);

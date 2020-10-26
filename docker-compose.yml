@@ -13,6 +13,7 @@ services:
     networks:
       - database
       - proxy
+      - rabbitmq-network
 
   nginx:
     container_name: nginx-$PROJECT_NAME

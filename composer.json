@@ -23,7 +23,9 @@
         "contributte/rabbitmq": "^7",
         "contributte/console": "^0.8",
         "contributte/forms-bootstrap": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12",

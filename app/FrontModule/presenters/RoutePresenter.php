@@ -71,7 +71,7 @@ class RoutePresenter extends BasePresenter
             $this->flashMessage('Trasa nenalezena');
             $this->redirect('Homepage:default');
         }
-        $this->template->routes = $this->routes->findAll();
+        $this->template->routes = $this->cups->find($this->cupid)->related('cups_routes');
         $this->template->route = $route;
     }
 }
