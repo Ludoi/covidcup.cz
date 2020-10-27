@@ -40,7 +40,7 @@ abstract class Table
         }
     }
     
-    protected function getDatabase(): Context {
+    public function getDatabase(): Context {
         return $this->connection;
     }
 

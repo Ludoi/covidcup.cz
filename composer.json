@@ -25,7 +25,9 @@
         "contributte/forms-bootstrap": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "ext-libxml": "*"
+        "ext-libxml": "*",
+        "ext-dom": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12",

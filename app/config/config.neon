@@ -48,6 +48,8 @@ services:
 	results: App\Results
 	usersChanges: App\UsersChanges
 	cupsRacers: App\CupsRacers
+	articles: App\Articles
+	weather: App\Weather
 	- App\EmailConsumer
 	- App\EmailQueue(@Contributte\RabbitMQ\Client::getProducer(emailProducer))
 	- App\ProfileControlFactory
@@ -55,6 +57,9 @@ services:
 	- App\PlanControlFactory
 	- App\ResultEnterControlFactory
 	- App\ResultOrderControlFactory
+	- App\StartControlFactory
+	- App\Console\WeatherCommand
+	- App\Console\ResultsCommand
 
 rabbitmq:
 	connections:

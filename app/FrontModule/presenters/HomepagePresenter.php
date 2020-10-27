@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FrontModule;
 
+use App\Articles;
 use App\ChatControl;
 use App\ChatControlFactory;
 use App\Cups;
@@ -25,18 +26,21 @@ class HomepagePresenter extends BasePresenter {
     private PlanControlFactory $planControlFactory;
     private ResultEnterControlFactory $resultEnterControlFactory;
     private Cups $cups;
+    private Articles $articles;
     private int $cupid;
 
     public function __construct(Routes $routes, ChatControlFactory $chatControlFactory,
                                 PlanControlFactory $planControlFactory,
                                 ResultEnterControlFactory $resultEnterControlFactory,
-                                Cups $cups)
+                                Cups $cups, Articles $articles)
     {
         $this->routes = $routes;
         $this->chatControlFactory = $chatControlFactory;
         $this->planControlFactory = $planControlFactory;
         $this->resultEnterControlFactory = $resultEnterControlFactory;
         $this->cups = $cups;
+        $this->articles = $articles;
+
         $this->cupid = $cups->getActive();
     }
 
@@ -57,6 +61,7 @@ class HomepagePresenter extends BasePresenter {
 
     public function actionDefault()
     {
+        $this->template->article = $this->articles->findAll()->order('created DESC')->limit(1)->fetch();
     }
 
     public function actionRules() {

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App;
 
 
+use DOMDocument;
 use Nette\Database\ResultSet;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -36,4 +37,5 @@ class Weather extends Table
     {
         $this->findBy(['pointid' => $pointid])->order('measure_time DESC')->limit($limit, $top);
     }
+
 }

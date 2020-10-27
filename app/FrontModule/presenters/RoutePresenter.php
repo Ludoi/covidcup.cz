@@ -21,6 +21,8 @@ use App\ResultEnterControlFactory;
 use App\ResultOrderControl;
 use App\ResultOrderControlFactory;
 use App\Routes;
+use App\StartControl;
+use App\StartControlFactory;
 use Contributte\RabbitMQ\Consumer\Consumer;
 use Tracy\Dumper;
 
@@ -63,6 +65,7 @@ class RoutePresenter extends BasePresenter
     {
         return $this->resultOrderControlFactory->create($this->cupid, $this->routeid);
     }
+
 
     public function actionDefault(int $id) {
         $this->routeid = $id;

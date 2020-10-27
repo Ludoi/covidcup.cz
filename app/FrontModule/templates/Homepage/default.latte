@@ -16,6 +16,16 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-7 col-sm-6">
                         <div class="row">
+<div class="col-sm-12">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h4 class="card-title">{$article->title}</h4>
+                                    {$article->content|noescape}
+                                </div>
+                            </div>
+</div>
+                        </div>
+                        <div class="row">
                             <div class="col-sm-6">
                             {control chatControl}
                             </div>
