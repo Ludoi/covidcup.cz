@@ -21,7 +21,7 @@
 
     <title>Covidcup :: {block title|stripTags|strip}Hlavně se z toho neposrat!{/block}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <meta name="description" content="{include #description|striptags|strip}"/>
+    <meta name="description" content="{ifset #description}{include #description|striptags|strip}{/ifset}"/>
     <meta name="keywords" content="Covidcup, běh, běh do vrchu, vrchy, Beskydy, zimní pohár, Lysá hora"/>
     <link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
     <link rel="stylesheet"
@@ -37,7 +37,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
             integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
             crossorigin="anonymous"></script>
-    {block head}{/block}
+    {ifset #head}{include #head}{/ifset}
 </head>
 <body>
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
@@ -93,6 +93,6 @@
         </div>
     </div>
 {/snippet}
-{include #content}
+{ifset #content}{include #content}{/ifset}
 </body>
 </html>

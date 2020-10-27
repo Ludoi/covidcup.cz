@@ -64,7 +64,7 @@ class RoutePresenter extends BasePresenter
         return $this->resultOrderControlFactory->create($this->cupid, $this->routeid);
     }
 
-    public function renderDefault(int $id) {
+    public function actionDefault(int $id) {
         $this->routeid = $id;
         $route = $this->routes->find($id);
         if (is_null($route)) {
