@@ -55,8 +55,8 @@ class StartControl extends Control
     {
         $form = new BootstrapForm();
         $form->addHidden('routeid', $this->routeid);
-        $form->addHidden('latitude')->setHtmlId('start-latitude');
-        $form->addHidden('longitude')->setHtmlId('start-longitude');
+        $form->addHidden('latitude')->setHtmlId('latitude');
+        $form->addHidden('longitude')->setHtmlId('longitude');
         $form->addProtection();
         $form->addSubmit('send', 'Start!')->getControlPrototype()->setAttribute('class', 'btn btn-block btn-lg btn-danger');
         $form->onSubmit[] = [$this, 'processStart'];
@@ -81,8 +81,8 @@ class StartControl extends Control
     {
         $form = new BootstrapForm();
         $form->addHidden('routeid', $this->routeid);
-        $form->addHidden('latitude')->setHtmlId('finish-latitude');
-        $form->addHidden('longitude')->setHtmlId('finish-longitude');
+        $form->addHidden('latitude')->setHtmlId('latitude');
+        $form->addHidden('longitude')->setHtmlId('longitude');
         $form->addProtection();
         $form->addSubmit('send', 'Stop!')->getControlPrototype()->setAttribute('class', 'btn btn-block btn-lg btn-danger');
         $form->onSubmit[] = [$this, 'processFinish'];
