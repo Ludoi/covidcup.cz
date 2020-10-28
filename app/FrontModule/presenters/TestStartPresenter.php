@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace FrontModule;
 
 
+use App\Measurements;
 use App\StartControl;
 use App\StartControlFactory;
 

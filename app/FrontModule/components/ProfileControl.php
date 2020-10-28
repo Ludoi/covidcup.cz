@@ -47,6 +47,7 @@ class ProfileControl extends Control
         $form->addText('nickname', 'Přezdívka:', 50, 50)
             ->addRule(Form::FILLED, 'Jméno do výsledků je povinné.');
         $form->addText('email', 'Email:', 50, 250)->addRule(Form::EMAIL)->setRequired();
+        $form->addProtection();
 
         $form->addSubmit('send', 'Uložit');
 

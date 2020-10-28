@@ -49,6 +49,7 @@ class SignPresenter extends BasePresenter
         $form->addText('email', 'Email:', 50, 250)->addRule(Form::EMAIL)->setRequired();
         $form->addPassword('password', 'Heslo:', 50, 50)->setRequired();
         $form->addCheckbox('remember', 'Zapamatuj si mě na tomto počítači');
+        $form->addProtection();
         $form->addSubmit('send', 'Přihlásit se');
 
         $form->onSuccess[] = [$this, 'processSignIn'];
@@ -84,6 +85,7 @@ class SignPresenter extends BasePresenter
         $form->renderMode = RenderMode::VERTICAL_MODE;
         $form->addText('email', 'Email:')
             ->setRequired('Zadej email.');
+        $form->addProtection();
 
         $form->addSubmit('send', 'Odeslat');
 
@@ -141,6 +143,7 @@ class SignPresenter extends BasePresenter
         $form->addHidden('token', $this->token);
         $form->addPassword('newPassword1', 'Nové heslo:')->setRequired();
         $form->addPassword('newPassword2', 'Zopakovat heslo:')->setRequired();
+        $form->addProtection();
 
         $form->addSubmit('send', 'Uložit');
 
@@ -184,6 +187,7 @@ class SignPresenter extends BasePresenter
         $form->addPassword('currentPassword', 'Původní heslo:')->setRequired();
         $form->addPassword('newPassword1', 'Nové heslo:')->setRequired();
         $form->addPassword('newPassword2', 'Zopakovat nové heslo:')->setRequired();
+        $form->addProtection();
 
         $form->addSubmit('send', 'Uložit');
 

@@ -50,6 +50,7 @@ services:
 	cupsRacers: App\CupsRacers
 	articles: App\Articles
 	weather: App\Weather
+	measurements: App\Measurements
 	- App\EmailConsumer
 	- App\EmailQueue(@Contributte\RabbitMQ\Client::getProducer(emailProducer))
 	- App\ProfileControlFactory

@@ -87,6 +87,7 @@ class PlanControl extends Control
 
         $form->addDateTime('plan_date', 'Termín:')->getControlPrototype()->setAttribute('data-target', '#planDatePicker')
             ->setAttribute('id', 'planDatePicker')->setAttribute('data-toggle', 'datetimepicker');
+        $form->addProtection();
         $form->addTextArea('comment', 'Komentář:');
         $form->addSubmit('send', 'Přidat');
         $form->onSubmit[] = [$this, 'processAddItem'];
@@ -124,7 +125,7 @@ class PlanControl extends Control
                 $racerid = $this->cups->getRacerid($this->cupid, $this->userid);
                 if (!is_null($racerid)) {
                     $this->addItem = false;
-                    $this->plans->insertItem($this->cupid, $values->routeid, $racerid, $values->comment, $values->plan_date);
+                    $this->plans->insertItem($this->cupid, (int)$values->routeid, $racerid, $values->comment, $values->plan_date);
                     $this->flashMessage('Plán uložen.');
                 }
             }

@@ -52,6 +52,7 @@ class ChatControl extends Control
         $form = new BootstrapForm();
         $form->addTextArea('content', 'Příspěvek:')->setRequired();
         $form->addSubmit('send', 'Přidat');
+        $form->addProtection();
         $form->onSubmit[] = [$this, 'processAddItem'];
         return $form;
     }
@@ -75,12 +76,14 @@ class ChatControl extends Control
     public function processAddItem(Form $form): void
     {
         $this->addItem = false;
-        $values = $form->getValues();
-        $userid = (int)$this->user->getId();
-        $racerid = $this->cups->getRacerid($this->cupid, $userid);
-        if (!is_null($racerid)) {
-            $this->chats->insertItem($this->cupid, $racerid, $values->content, '');
-            $this->flashMessage('Příspěvek uložen.');
+        if ($form->isValid()) {
+            $values = $form->getValues();
+            $userid = (int)$this->user->getId();
+            $racerid = $this->cups->getRacerid($this->cupid, $userid);
+            if (!is_null($racerid)) {
+                $this->chats->insertItem($this->cupid, $racerid, $values->content, '');
+                $this->flashMessage('Příspěvek uložen.');
+            }
         }
         $this->redrawControl();
     }
