@@ -11,12 +11,12 @@
                     {/if}
                 </p>
             {else}
-            {include #gpsLocation}
                 {if $beforeStart}
                     {control start}
                 {else}
                     {control finish}
                 {/if}
+                {include #gpsLocation}
                 <a n:href="Cancel!" class="btn btn-secondary">Zrušit</a>
             {/if}
         </div>
