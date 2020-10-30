@@ -1,0 +1,22 @@
+{block content}
+    <div class="container clearfix">
+        <div class="bs-docs-section">
+            <div class="row">
+                <div class="col-sm-6">
+                    {if $allowed}
+                        {control startControl}
+                    {else}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="card-title">Chci změřit čas</h4>
+                                <p class="card-text">
+                                    Počkej do začátku poháru!
+                                </p>
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

@@ -1,16 +1,25 @@
 {if $user->isLoggedIn()}
     <div class="card mb-3">
-        {if $addItem}
+        <div n:foreach="$flashes as $flash" class="alert alert-{$flash->type}">{$flash->message}</div>
+        {if $addItemGPX}
             <div class="card-body">
-                <ul n:if="$form->hasErrors()">
-                    <li n:foreach="$form->errors as $error">{$error}</li>
-                </ul>
+                {control addItemGPX}
+                <a n:href="Cancel!" class="btn btn-secondary">Zrušit</a>
+            </div>
+        {elseif $addItem}
+            <div class="card-body">
                 {control addItem}
+                <a n:href="Cancel!" class="btn btn-secondary">Zrušit</a>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#startTimePicker').datetimepicker({locale: 'cs'});
+                    });
+                </script>
             </div>
         {else}
             {snippet}
                 <div class="card-body">
-                    <h4 class="card-title">Zapsané výsledky</h4>
+                    <h4 class="card-title">Zaznamenané výsledky</h4>
                     {if $enterOpen}
                         {if sizeof($items) > 0}
                             <div class="table-responsive card-text">
@@ -49,23 +58,19 @@
                                     </tbody>
                                 </table>
                             </div>
-                        {includeblock "pagination.latte"}
-                            <a n:href="addItem!" class="btn btn-primary">Přidat</a>
-                            <p class="card-text">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16"
-                                     class="bi bi-shield-lock-fill text-success" fill="currentColor"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                          d="M8 .5c-.662 0-1.77.249-2.813.525a61.11 61.11 0 0 0-2.772.815 1.454 1.454 0 0 0-1.003 1.184c-.573 4.197.756 7.307 2.368 9.365a11.192 11.192 0 0 0 2.417 2.3c.371.256.715.451 1.007.586.27.124.558.225.796.225s.527-.101.796-.225c.292-.135.636-.33 1.007-.586a11.191 11.191 0 0 0 2.418-2.3c1.611-2.058 2.94-5.168 2.367-9.365a1.454 1.454 0 0 0-1.003-1.184 61.09 61.09 0 0 0-2.772-.815C9.77.749 8.663.5 8 .5zm.5 7.415a1.5 1.5 0 1 0-1 0l-.385 1.99a.5.5 0 0 0 .491.595h.788a.5.5 0 0 0 .49-.595L8.5 7.915z"/>
-                                </svg>
-                                = čas je ověřený - tzn. změřený touto aplikací nebo nahraný z GPX souboru
-                            </p>
-                        {else}
-                            <p class="card-text">
-                                Zatím si nikdo nic nezapsal :-)
-                            </p>
-                            <a n:href="addItem!" class="btn btn-primary">Buď první!</a>
+                            {includeblock "pagination.latte"}
                         {/if}
+                        <a n:href="addItem!" class="btn btn-primary">Přidat ručně</a>
+                        <a n:href="addItemGPX!" class="btn btn-primary">Přidat z GPX</a>
+                        <p class="card-text">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                 class="bi bi-shield-lock-fill text-success" fill="currentColor"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M8 .5c-.662 0-1.77.249-2.813.525a61.11 61.11 0 0 0-2.772.815 1.454 1.454 0 0 0-1.003 1.184c-.573 4.197.756 7.307 2.368 9.365a11.192 11.192 0 0 0 2.417 2.3c.371.256.715.451 1.007.586.27.124.558.225.796.225s.527-.101.796-.225c.292-.135.636-.33 1.007-.586a11.191 11.191 0 0 0 2.418-2.3c1.611-2.058 2.94-5.168 2.367-9.365a1.454 1.454 0 0 0-1.003-1.184 61.09 61.09 0 0 0-2.772-.815C9.77.749 8.663.5 8 .5zm.5 7.415a1.5 1.5 0 1 0-1 0l-.385 1.99a.5.5 0 0 0 .491.595h.788a.5.5 0 0 0 .49-.595L8.5 7.915z"/>
+                            </svg>
+                            = čas je ověřený - tzn. změřený touto aplikací nebo nahraný z GPX souboru
+                        </p>
                     {else}
                         <p class="card-text">
                             Počkej do začátku poháru!

@@ -15,7 +15,6 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\Selection;
 use Nette\Security\User;
-use Tracy\Dumper;
 
 class ResultEnterControl extends Control
 {
@@ -28,9 +27,11 @@ class ResultEnterControl extends Control
     private int $itemsPerPage = 20;
     private int $page = 1;
     private bool $addItem = false;
+    private bool $addItemGPX = false;
     private int $userid;
+    private GPXQueue $GPXQueue;
 
-    public function __construct(int $cupid, ?int $routeid, Results $results, Users $users, User $user, Cups $cups)
+    public function __construct(int $cupid, ?int $routeid, Results $results, Users $users, User $user, Cups $cups, GPXQueue $GPXQueue)
     {
         $this->cupid = $cupid;
         $this->routeid = $routeid;
@@ -39,6 +40,7 @@ class ResultEnterControl extends Control
         $this->user = $user;
         $this->cups = $cups;
         $this->userid = (int)$this->user->getId();
+        $this->GPXQueue = $GPXQueue;
     }
 
     public function handlePage(int $page)
@@ -50,6 +52,13 @@ class ResultEnterControl extends Control
     public function handleAddItem(): void
     {
         $this->addItem = true;
+        $this->addItemGPX = false;
+    }
+
+    public function handleAddItemGPX(): void
+    {
+        $this->addItem = false;
+        $this->addItemGPX = true;
     }
 
     public function handleDelete(int $id): void
@@ -60,26 +69,89 @@ class ResultEnterControl extends Control
     public function handleCancel(): void
     {
         $this->addItem = false;
+        $this->addItemGPX = false;
+    }
+
+    public function createComponentAddItemGPX(): Form
+    {
+        $form = new BootstrapForm();
+        if (!is_null($this->routeid)) {
+            $form->addHidden('routeid', $this->routeid);
+        } else {
+            $routes = [];
+            foreach ($this->cups->find($this->cupid)
+                         ->related('cups_routes', 'cupid')->fetchAll() as $route) {
+                $routes[$route->id] = $route->ref('routeid')->description;
+            };
+            $form->addSelect('routeid', 'Trasa:', $routes)->setRequired(true)->setPrompt('vyber trasu');
+        }
+        $form->addUpload('gpxFile', 'Soubor GPX:');
+        $form->addProtection();
+        $form->addSubmit('send', 'Přidat');
+        $form->onSubmit[] = [$this, 'processAddItemGPX'];
+
+        return $form;
+    }
+
+    public function processAddItemGPX(Form $form): void
+    {
+        $this->addItemGPX = false;
+        if ($form->isValid()) {
+            $values = $form->getValues();
+            $now = new \DateTime();
+            $filename = sprintf('result_%05d-%05d_%s.gpx', $this->userid, $values->routeid, $now->format('Y-m-d-H-i-s'));
+            $moveDir = APP_DIR . '/../files/gpx/results/' . $filename;
+            $values->gpxFile->move($moveDir);
+            $this->GPXQueue->publish($this->userid, (int)$values->routeid, $filename);
+        }
+        if (!$form->hasErrors()) {
+            $this->flashMessage('Soubor uložen ke zpracování.');
+        }
+        $this->redrawControl();
     }
 
     public function createComponentAddItem(): Form
     {
         $form = new BootstrapForm();
-//        if (!is_null($this->routeid)) {
-//            $form->addHidden('routeid', $this->routeid);
-//        } else {
-//            $routes = [];
-//            foreach ($this->cups->find($this->cupid)
-//                         ->related('cups_routes', 'cupid')->fetchAll() as $route) {
-//                $routes[] = [$route->id => $route->ref('routeid')->description];
-//            };
-//            $form->addSelect('routeid', 'Trasa:', $routes);
-//        }
-//        $form->addDateTime('plan_date', 'Termín:');
-//        $form->addTextArea('comment', 'Komentář:');
-//        $form->addSubmit('send', 'Přidat');
-//        $form->onSubmit[] = [$this, 'processAddItem'];
+        if (!is_null($this->routeid)) {
+            $form->addHidden('routeid', $this->routeid);
+        } else {
+            $routes = [];
+            foreach ($this->cups->find($this->cupid)
+                         ->related('cups_routes', 'cupid')->fetchAll() as $route) {
+                $routes[$route->id] = $route->ref('routeid')->description;
+            };
+            $form->addSelect('routeid', 'Trasa:', $routes)->setRequired(true)->setPrompt('vyber trasu');
+        }
+        $form->addDateTime('startTime', 'Čas startu:')->setRequired(true)->getControlPrototype()
+            ->setAttribute('data-target', '#startTimePicker')
+            ->setAttribute('id', 'startTimePicker')->setAttribute('data-toggle', 'datetimepicker');;
+        $form->addText('time', 'Dosažený čas:')->setRequired(true)->setEmptyValue('0:00:00')
+            ->addRule($form::PATTERN, 'Špatná hodnota', '[0-9]:[0-5][0-9]:[0-5][0-9]');
+        $form->addProtection();
+        $form->addSubmit('send', 'Přidat');
+        $form->onSubmit[] = [$this, 'processAddItem'];
+
         return $form;
+    }
+
+    public function processAddItem(Form $form): void
+    {
+        if ($form->isValid()) {
+            $values = $form->getValues();
+            if (!$this->cups->isDateValid($this->cupid, $values->startTime, true)) {
+                $form->addError('Čas startu není v době konání poháru.');
+            }
+            $parts = explode(':', $values->time);
+            $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
+            $now = new \DateTime();
+            $this->results->insertItem($this->cups->getActive(), (int)$values->routeid, $this->userid, $values->startTime, $time);
+        }
+        $this->addItem = $form->hasErrors();
+        if (!$form->hasErrors()) {
+            $this->flashMessage('Výsledek uložen.');
+        }
+        $this->redrawControl();
     }
 
     public function render(): void
@@ -87,13 +159,27 @@ class ResultEnterControl extends Control
         $items = $this->results->getItems($this->cupid, true, $this->routeid, $this->userid);
         $this->getPage($items);
         $this->template->addItem = $this->addItem;
+        $this->template->addItemGPX = $this->addItemGPX;
         $this->template->userid = $this->userid;
         $this->template->routeid = $this->routeid;
         $this->template->cup = $this->cups->find($this->cupid);
-        $now = new \DateTime( );
-        $this->template->enterOpen = ($this->template->cup->valid_from->format('U') < $now->format('U')) &&
-            ($this->template->cup->valid_to->format('U') > $now->format('U'));
+        $now = new \DateTime();
+        $this->template->enterOpen = $this->cups->isDateValid($this->cupid, $now, false);
+        $this->template->form = $this['addItem'];
         $this->template->render(__DIR__ . '/resultEnter.latte');
+    }
+
+    public function renderAddItem(): void
+    {
+        $this->template->addItem = $this->addItem;
+        $this->template->addItemGPX = $this->addItemGPX;
+        $this->template->userid = $this->userid;
+        $this->template->routeid = $this->routeid;
+        $this->template->cup = $this->cups->find($this->cupid);
+        $now = new \DateTime();
+        $this->template->enterOpen = $this->cups->isDateValid($this->cupid, $now, false);
+        $this->template->form = $this['addItem'];
+        $this->template->render(__DIR__ . '/resultEnterSingle.latte');
     }
 
     private function getPage(Selection $items)
@@ -102,15 +188,6 @@ class ResultEnterControl extends Control
         $this->template->items = $items->page($this->page, $this->itemsPerPage, $lastPage);
         $this->template->page = $this->page;
         $this->template->lastPage = $lastPage;
-    }
-
-    public function processAddItem(Form $form): void
-    {
-        $this->addItem = false;
-//        $values = $form->getValues();
-//        $this->plans->insertItem($this->cupid, $values->routeid, $this->userid, $values->comment, $values->plan_date);
-//        $this->flashMessage('Plán uložen.');
-        $this->redrawControl();
     }
 
 }

@@ -27,7 +27,8 @@
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "ext-dom": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-zip": "*"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12",

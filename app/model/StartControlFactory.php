@@ -11,9 +11,7 @@ declare(strict_types=1);
 namespace App;
 
 
-use Nette\Security\User;
-
 interface StartControlFactory
 {
-    public function create(int $routeid): StartControl;
+    public function create(): StartControl;
 }

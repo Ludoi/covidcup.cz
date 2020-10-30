@@ -11,25 +11,56 @@ declare(strict_types=1);
 namespace App;
 
 
+use DateTime;
+use DOMDocument;
+
 class GPXParser
 {
     private object $gpx;
+    private bool $valid;
+    private string $filename;
 
     public function __construct(string $filename)
     {
-        $this->gpx = simplexml_load_file($filename);
+        $this->filename = $filename;
+        $this->valid = $this->isValid();
+        if ($this->valid) $this->gpx = simplexml_load_file($filename);
     }
 
-    private function checkGpx(): bool {
-        return sizeof($this->gpx->xpath('/trk/trkseg/trkpt')) > 0;
+    private function isValid(): bool
+    {
+        libxml_use_internal_errors(true);
 
+        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc->load($this->filename);
+
+        $errors = libxml_get_errors();
+
+        if (empty($errors)) {
+            return true;
+        }
+
+        $error = $errors[0];
+        if ($error->level < 3) {
+            return true;
+        }
+        return false;
+    }
+
+    private function checkGpx(): bool
+    {
+        if ($this->isValid()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function getStartPoint(): array {
         $point = [];
         if ($this->checkGpx()) {
-            $point['latitude'] = $this->gpx->trk->trkseg->trkpt[0]->lat;
-            $point['longitude'] = $this->gpx->trk->trkseg->trkpt[0]->lon;
+            $point['latitude'] = (float)$this->gpx->trk->trkseg->trkpt[0]['lat'];
+            $point['longitude'] = (float)$this->gpx->trk->trkseg->trkpt[0]['lon'];
         }
         return $point;
     }
@@ -38,26 +69,38 @@ class GPXParser
         $point = [];
         if ($this->checkGpx()) {
             $count = sizeof($this->gpx->trk->trkseg->trkpt);
-            $point['latitude'] = $this->gpx->trk->trkseg->trkpt[$count - 1]->lat;
-            $point['longitude'] = $this->gpx->trk->trkseg->trkpt[$count - 1]->lon;
+            $point['latitude'] = (float)$this->gpx->trk->trkseg->trkpt[$count - 1]['lat'];
+            $point['longitude'] = (float)$this->gpx->trk->trkseg->trkpt[$count - 1]['lon'];
         }
         return $point;
     }
 
-    public function getStartTime(): ?int {
+    public function getStartTime(): ?DateTime
+    {
         if ($this->checkGpx()) {
-            $time = new \DateTime($this->gpx->trk->trkseg->trkpt[0]->time);
-            return (int)$time->format('U');
+            $timeStr = (string)$this->gpx->trk->trkseg->trkpt[0]->time;
+            if ($timeStr != '') {
+                $time = new DateTime($timeStr);
+                return $time;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
     }
 
-    public function getFinishTime(): ?int {
+    public function getFinishTime(): ?DateTime
+    {
         if ($this->checkGpx()) {
             $count = sizeof($this->gpx->trk->trkseg->trkpt);
-            $time = new \DateTime($this->gpx->trk->trkseg->trkpt[$count - 1]->time);
-            return (int)$time->format('U');
+            $timeStr = (string)$this->gpx->trk->trkseg->trkpt[$count - 1]->time;
+            if ($timeStr != '') {
+                $time = new DateTime($timeStr);
+                return $time;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

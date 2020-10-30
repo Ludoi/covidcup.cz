@@ -21,6 +21,7 @@ class ResultsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-
+        $file = fopen(APP_DIR . '/../temp/text.txt');
+        fwrite($file, "test \n");
     }
 }

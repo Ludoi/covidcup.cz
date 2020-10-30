@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App;
 
 
-use DOMDocument;
 use Nette\Database\ResultSet;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -23,9 +22,10 @@ class Weather extends Table
     public function insertItem(int $pointid, DateTime $measureTime, float $temperature, float $humidity,
                                float $snow, float $wind, float $pressure, string $visibility, string $remark)
     {
+        $now = new DateTime();
         $this->insert(['pointid' => $pointid, 'measure_time' => $measureTime, 'temperature' => $temperature,
             'humidity' => $humidity, 'snow' => $snow, 'wind' => $wind, 'pressure' => $pressure,
-            'visibility' => $visibility, 'remark' => $remark]);
+            'visibility' => $visibility, 'remark' => $remark, 'created' => $now]);
     }
 
     public function getWeather(int $pointid, DateTime $when): ActiveRow

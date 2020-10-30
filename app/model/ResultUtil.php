@@ -206,4 +206,17 @@ class ResultUtil
         return $newName;
     }
 
+    static public function distance(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        if (($lat1 == $lat2) && ($lon1 == $lon2)) {
+            return 0;
+        } else {
+            $theta = $lon1 - $lon2;
+            $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            return $dist * 60 * 2.43815616;
+        }
+    }
+
 }

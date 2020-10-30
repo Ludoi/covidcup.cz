@@ -15,7 +15,6 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\Selection;
 use Nette\Security\User;
-use Tracy\Dumper;
 
 class PlanControl extends Control
 {
@@ -79,11 +78,11 @@ class PlanControl extends Control
         } else {
             $routes = [];
             foreach ($cup->related('cups_routes', 'cupid')->fetchAll() as $route) {
-                $routes[] = [$route->id => $route->ref('routeid')->description];
+                $routes[$route->id] = $route->ref('routeid')->description;
             };
-            $form->addSelect('routeid', 'Trasa:', $routes);
+            $form->addSelect('routeid', 'Trasa:', $routes)->setPrompt('Vyber trasu')
+                ->setRequired('Vyplň trasu.');
         }
-
 
         $form->addDateTime('plan_date', 'Termín:')->getControlPrototype()->setAttribute('data-target', '#planDatePicker')
             ->setAttribute('id', 'planDatePicker')->setAttribute('data-toggle', 'datetimepicker');

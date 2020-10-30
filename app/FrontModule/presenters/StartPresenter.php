@@ -11,29 +11,30 @@ declare(strict_types=1);
 namespace FrontModule;
 
 
-use App\Measurements;
+use App\Cups;
 use App\StartControl;
 use App\StartControlFactory;
 
-class TestStartPresenter extends BaseSignPresenter
+class StartPresenter extends BaseSignPresenter
 {
 
     private StartControlFactory $startControlFactory;
-    private int $routeid;
+    private Cups $cups;
 
-    public function __construct(StartControlFactory $startControlFactory)
+    public function __construct(StartControlFactory $startControlFactory, Cups $cups)
     {
         $this->startControlFactory = $startControlFactory;
-        $this->routeid = 5;
+        $this->cups = $cups;
     }
 
     protected function createComponentStartControl(): StartControl
     {
-        return $this->startControlFactory->create($this->routeid);
+        return $this->startControlFactory->create();
     }
 
     public function actionDefault(): void
     {
-
+        $now = new \DateTime();
+        $this->template->allowed = $this->cups->isDateValid($this->cups->getActive(), $now, false);
     }
 }

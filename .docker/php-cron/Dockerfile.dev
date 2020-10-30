@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
             libzip-dev \
             git \
             unzip \
-            supervisor
+            cron
 RUN docker-php-ext-install curl mysqli opcache xml pdo_mysql zip intl
 RUN if [ $WITH_XDEBUG = "true" ] ; then \
         pecl install xdebug; \
@@ -29,8 +29,7 @@ RUN if [ $WITH_XDEBUG = "true" ] ; then \
         echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     fi ;
 WORKDIR /var/www/app
+ADD ./.docker/conf/php-cron/scheduler /etc/cron.d/scheduler
 
-COPY ./.docker/conf/php-email/supervisord.conf /etc/supervisor
-COPY ./.docker/conf/supervisor/* /etc/supervisor/conf.d
-
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+RUN crontab /etc/cron.d/scheduler
+CMD ["cron", "-f"]

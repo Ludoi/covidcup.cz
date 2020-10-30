@@ -45,7 +45,20 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: .docker/php-email/Dockerfile.dev
+      dockerfile: .docker/php-email/Dockerfile
+    volumes:
+      - .:/var/www/app
+      - .docker/conf/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - database
+      - rabbitmq-network
+
+  php-cron:
+    container_name: php-cron-$PROJECT_NAME
+    restart: always
+    build:
+      context: .
+      dockerfile: .docker/php-cron/Dockerfile
     volumes:
       - .:/var/www/app
       - .docker/conf/php/php.ini:/usr/local/etc/php/php.ini

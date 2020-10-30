@@ -18,7 +18,7 @@ use Nette\Security\User;
 
 class StartControl extends Control
 {
-    private int $routeid;
+    private ?int $routeid = null;
     private Measurements $measurements;
     private Cups $cups;
     private User $user;
@@ -26,9 +26,8 @@ class StartControl extends Control
     private bool $beforeStart;
     private Results $results;
 
-    public function __construct(int $routeid, Cups $cups, Measurements $measurements, User $user, Results $results)
+    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results)
     {
-        $this->routeid = $routeid;
         $this->measurements = $measurements;
         $this->cups = $cups;
         $this->user = $user;
@@ -38,17 +37,42 @@ class StartControl extends Control
     public function handleCancel(): void
     {
         $this->firstPage = true;
-    }
-
-    public function handleStart(): void
-    {
-        $this->firstPage = false;
-
+        $this->redrawControl();
     }
 
     public function handleStop(): void
     {
         $this->firstPage = false;
+        $this->redrawControl();
+    }
+
+    public function createComponentPreStart(): Form
+    {
+        $form = new BootstrapForm();
+        $cup = $this->cups->find($this->cups->getActive());
+        $routes = [];
+        foreach ($cup->related('cups_routes', 'cupid')->fetchAll() as $route) {
+            $routes[$route->id] = $route->ref('routeid')->description;
+        };
+        $form->addSelect('routeid', 'Trasa:', $routes)->setPrompt('Vyber trasu')
+            ->setRequired('Vyplň trasu.');
+        $form->addProtection();
+        $form->addSubmit('send', 'Chci startovat!');
+        $form->onSubmit[] = [$this, 'processPreStart'];
+
+        return $form;
+    }
+
+    public function processPreStart(Form $form): void
+    {
+        if ($form->isValid()) {
+            $values = $form->getValues();
+            $this->routeid = (int)$values->routeid;
+            $this->firstPage = false;
+        } else {
+            $this->firstPage = true;
+        }
+        $this->redrawControl();
     }
 
     public function createComponentStart(): Form
@@ -73,8 +97,10 @@ class StartControl extends Control
             $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
-            $this->measurements->insertStart($racerid, $this->routeid, $now, $latitude, $longitude);
+            $this->measurements->insertStart($racerid, (int)$values->routeid, $now, $latitude, $longitude);
         }
+        $this->firstPage = true;
+        $this->redrawControl();
     }
 
     public function createComponentFinish(): Form
@@ -110,6 +136,8 @@ class StartControl extends Control
                 }
             }
         }
+        $this->firstPage = true;
+        $this->redrawControl();
     }
 
     private function checkIsActive(): void

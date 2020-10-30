@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App;
 
 
+use Nette\Database\Table\ActiveRow;
+
 class Measurements extends Table
 {
     protected ?string $tableName = 'measurements';
@@ -38,6 +40,16 @@ class Measurements extends Table
         } else {
             return null;
         }
+    }
+
+    public function insertGPXDetails(int $userid, int $routeid, \DateTime $startTime, ?float $startLatitude,
+                                     ?float $startLongitude, \DateTime $finishTime, ?float $finishLatitude,
+                                     ?float $finishLongitude, string $gpxFile, string $fileHash): ActiveRow
+    {
+        return $this->insert(['userid' => $userid, 'routeid' => $routeid, 'start_time' => $startTime,
+            'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude, 'finish_time' => $finishTime,
+            'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude, 'gpx_file' => $gpxFile,
+            'file_hash' => $fileHash, 'active' => false]);
     }
 
     public function deactivate(): void

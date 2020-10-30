@@ -5,7 +5,7 @@
                 <h4 class="card-title">Jdeme na to?</h4>
                 <p class="card-text">
                     {if $beforeStart}
-                        <a n:href="Start!" class="btn btn-primary">Chci odstartovat</a>
+                        {control preStart}
                     {else}
                         <a n:href="Stop!" class="btn btn-primary">Chci zastavit</a>
                     {/if}

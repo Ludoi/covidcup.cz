@@ -17,11 +17,11 @@ class Results extends Table
 {
     protected ?string $tableName = 'results';
 
-    public function insertItem(int $cupid, int $routeid, int $userid, \DateTime $startTime, int $time)
+    public function insertItem(int $cupid, int $routeid, int $userid, \DateTime $startTime, int $time, bool $guaranteed = false)
     {
         $now = new \DateTime();
         $this->insert(['cupid' => $cupid, 'routeid' => $routeid, 'userid' => $userid, 'created' => $now,
-            'start_time' => $startTime, 'time_seconds' => $time, 'active' => true]);
+            'start_time' => $startTime, 'time_seconds' => $time, 'active' => true, 'guaranteed' => $guaranteed]);
     }
 
     public function getItems(int $cupid, ?bool $active, ?int $routeid, ?int $userid): Selection

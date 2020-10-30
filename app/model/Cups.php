@@ -11,8 +11,6 @@ declare(strict_types=1);
 namespace App;
 
 
-use Tracy\Dumper;
-
 class Cups extends Table
 {
     protected ?string $tableName = 'cups';
@@ -30,5 +28,20 @@ class Cups extends Table
         } else {
             return null;
         }
+    }
+
+    public function isDateValid(int $cupid, \DateTime $dateTime, bool $untilToday): bool
+    {
+        $result = false;
+        $cup = $this->find($cupid);
+        if (!is_null($cup)) {
+            $from = $cup->valid_from->format('U');
+            $to = $cup->valid_to->format('U');
+            $now = (new \DateTime())->format('U');
+            $dateToCheck = $dateTime->format('U');
+            $to = $untilToday ? $now : $to;
+            if ($dateToCheck >= $from && $dateToCheck <= $to) $result = true;
+        }
+        return $result;
     }
 }

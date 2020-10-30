@@ -28,6 +28,19 @@ services:
       - database
       - rabbitmq-network
 
+  php-cron:
+    container_name: php-cron-$PROJECT_NAME
+    restart: always
+    build:
+      context: .
+      dockerfile: .docker/php-cron/Dockerfile.dev
+    volumes:
+      - .:/var/www/app
+      - .docker/conf/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - database
+      - rabbitmq-network
+
   nginx:
     container_name: nginx-$PROJECT_NAME
     restart: always

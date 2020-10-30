@@ -53,6 +53,8 @@ services:
 	measurements: App\Measurements
 	- App\EmailConsumer
 	- App\EmailQueue(@Contributte\RabbitMQ\Client::getProducer(emailProducer))
+	- App\GPXConsumer
+	- App\GPXQueue(@Contributte\RabbitMQ\Client::getProducer(gpxProducer))
 	- App\ProfileControlFactory
 	- App\ChatControlFactory
 	- App\PlanControlFactory
@@ -77,6 +79,10 @@ rabbitmq:
 			connection: default
 			# force queue declare on first queue operation during request
 			autoCreate: true
+		gpxQueue:
+			connection: default
+			# force queue declare on first queue operation during request
+			autoCreate: true
 
 #	exchanges:
 #		emailExchange:
@@ -94,11 +100,22 @@ rabbitmq:
 			queue: emailQueue
 			contentType: application/json
 			deliveryMode: 2 # Producer::DELIVERY_MODE_PERSISTENT
+		gpxProducer:
+#			exchange: emailExchange
+			queue: gpxQueue
+			contentType: application/json
+			deliveryMode: 2 # Producer::DELIVERY_MODE_PERSISTENT
 
 	consumers:
 		emailConsumer:
 			queue: emailQueue
 			callback: [@App\EmailConsumer, consume]
+			qos:
+				prefetchSize: 0
+				prefetchCount: 5
+		gpxConsumer:
+			queue: gpxQueue
+			callback: [@App\GPXConsumer, consume]
 			qos:
 				prefetchSize: 0
 				prefetchCount: 5
