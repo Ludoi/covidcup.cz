@@ -22,20 +22,24 @@ class Measurements extends Table
         return !is_null($this->findOneBy(['userid' => $userid, 'active' => true]));
     }
 
-    public function insertStart(int $userid, int $routeid, \DateTime $startTime, ?float $startLatitude, ?float $startLongitude): void
+    public function insertStart(int $userid, int $routeid, \DateTime $startTime, ?float $startLatitude,
+                                ?float $startLongitude, ?float $startDistance): void
     {
         if (!$this->isActive($userid)) {
             $this->insert(['userid' => $userid, 'routeid' => $routeid, 'start_time' => $startTime,
-                'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude, 'active' => true]);
+                'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude,
+                'start_distance' => $startDistance, 'active' => true]);
         }
     }
 
-    public function updateFinish(int $userid, \DateTime $finishTime, ?float $finishLatitude, ?float $finishLongitude): ?int
+    public function updateFinish(int $userid, \DateTime $finishTime, ?float $finishLatitude,
+                                 ?float $finishLongitude, ?float $finishDistance): ?int
     {
         if ($this->isActive($userid)) {
             $measurement = $this->findOneBy(['userid' => $userid, 'active' => true]);
             $measurement->update(['finish_time' => $finishTime,
-                'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude, 'active' => false]);
+                'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude,
+                'finish_distance' => $finishDistance, 'active' => false]);
             return (int)$measurement->id;
         } else {
             return null;
@@ -43,12 +47,14 @@ class Measurements extends Table
     }
 
     public function insertGPXDetails(int $userid, int $routeid, \DateTime $startTime, ?float $startLatitude,
-                                     ?float $startLongitude, \DateTime $finishTime, ?float $finishLatitude,
-                                     ?float $finishLongitude, string $gpxFile, string $fileHash): ActiveRow
+                                     ?float $startLongitude, ?float $startDistance, \DateTime $finishTime, ?float $finishLatitude,
+                                     ?float $finishLongitude, ?float $finishDistance, string $gpxFile, string $fileHash): ActiveRow
     {
         return $this->insert(['userid' => $userid, 'routeid' => $routeid, 'start_time' => $startTime,
-            'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude, 'finish_time' => $finishTime,
-            'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude, 'gpx_file' => $gpxFile,
+            'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude,
+            'start_distance' => $startDistance, 'finish_time' => $finishTime,
+            'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude,
+            'finish_distance' => $finishDistance, 'gpx_file' => $gpxFile,
             'file_hash' => $fileHash, 'active' => false]);
     }
 

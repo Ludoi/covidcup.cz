@@ -13,10 +13,11 @@ namespace App;
 
 use DateTime;
 use DOMDocument;
+use SimpleXMLElement;
 
 class GPXParser
 {
-    private object $gpx;
+    private SimpleXMLElement $gpx;
     private bool $valid;
     private string $filename;
 
@@ -24,7 +25,9 @@ class GPXParser
     {
         $this->filename = $filename;
         $this->valid = $this->isValid();
-        if ($this->valid) $this->gpx = simplexml_load_file($filename);
+        if ($this->valid) {
+            $this->gpx = simplexml_load_file($filename);
+        }
     }
 
     private function isValid(): bool

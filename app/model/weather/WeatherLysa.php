@@ -116,7 +116,8 @@ class WeatherLysa implements iWeather
                                 'pressure' => $pressure,
                                 'visibility' => $visibility,
                                 'remark' => $remark,
-                                'snow' => $snow
+                                'snow' => $snow,
+                                'created' => $now
                             ];
                             $weather->insert($data);
                         }

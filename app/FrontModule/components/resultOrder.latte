@@ -9,12 +9,12 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Kdo</th>
-                            <th scope="col">Kategorie</th>
+                            <!--                            <th scope="col">Kategorie</th> -->
                             <th scope="col">Čas</th>
                             <th scope="col">Ztráta</th>
                             <th scope="col">Rychlost (km/h)</th>
                             <th scope="col">Stoupavost (m/h)</th>
-                            <th scope="col">Počasí</th>
+                            <!--                            <th scope="col">Počasí</th> -->
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -24,12 +24,12 @@
                             <td>
                                 <a href="{$presenter->link('Racer:default', $item->userid)}">{$item->ref('userid')->ref('userid')->nickname}</a>
                             </td>
-                            <td></td>
+                            <!--                            <td></td> -->
                             <td class="text-right">{App\ResultUtil::secondsTime($item->time_seconds)|date: '%h:%I:%S'}</td>
                             <td></td>
                             <td class="text-right">{App\ResultUtil::speedSec($item->time_seconds, $route->length)|number: 2}</td>
                             <td class="text-right">{App\ResultUtil::climbSec($item->time_seconds, $route->height)|number: 0}</td>
-                            <td>{$item->weatherid}</td>
+                            <!--                            <td>{$item->weatherid}</td> -->
                             <td>{if $item->guaranteed}
                                     <svg width="1em" height="1em" viewBox="0 0 16 16"
                                          class="bi bi-shield-lock-fill text-success" fill="currentColor"

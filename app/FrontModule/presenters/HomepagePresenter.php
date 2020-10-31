@@ -7,12 +7,12 @@ use App\Articles;
 use App\ChatControl;
 use App\ChatControlFactory;
 use App\Cups;
+use App\Messages;
 use App\PlanControl;
 use App\PlanControlFactory;
 use App\ResultEnterControl;
 use App\ResultEnterControlFactory;
 use App\Routes;
-use Tracy\Dumper;
 
 /**
  * Homepage presenter.
@@ -28,11 +28,12 @@ class HomepagePresenter extends BasePresenter {
     private Cups $cups;
     private Articles $articles;
     private int $cupid;
+    private Messages $messages;
 
     public function __construct(Routes $routes, ChatControlFactory $chatControlFactory,
                                 PlanControlFactory $planControlFactory,
                                 ResultEnterControlFactory $resultEnterControlFactory,
-                                Cups $cups, Articles $articles)
+                                Cups $cups, Articles $articles, Messages $messages)
     {
         $this->routes = $routes;
         $this->chatControlFactory = $chatControlFactory;
@@ -42,6 +43,7 @@ class HomepagePresenter extends BasePresenter {
         $this->articles = $articles;
 
         $this->cupid = $cups->getActive();
+        $this->messages = $messages;
     }
 
     protected function createComponentChatControl(): ChatControl

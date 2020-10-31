@@ -25,6 +25,7 @@ mail:
 session:
 	autoStart: true
 	gc_maxlifetime: 1209600
+	savePath: ./temp/sessions
 
 extensions:
 	rabbitmq: Contributte\RabbitMQ\DI\RabbitMQExtension
@@ -32,8 +33,8 @@ extensions:
 
 services:
 	- App\AuthorizatorFactory::create
-	loggerHandler: Ludoi\Logger\Handler\FileHandler(%logger.folder%)
-	logger: Ludoi\Logger\Logger(@loggerHandler)
+	loggerHandler: Ludoi\Utils\Logger\Handler\FileHandler(%logger.folder%)
+	logger: Ludoi\Utils\Logger\Logger(@loggerHandler)
 	database: @Nette\Database\Context
 	cache: @Nette\Caching\IStorage
 	authenticator: App\Authenticate
@@ -51,6 +52,7 @@ services:
 	articles: App\Articles
 	weather: App\Weather
 	measurements: App\Measurements
+	messages: App\Messages
 	- App\EmailConsumer
 	- App\EmailQueue(@Contributte\RabbitMQ\Client::getProducer(emailProducer))
 	- App\GPXConsumer

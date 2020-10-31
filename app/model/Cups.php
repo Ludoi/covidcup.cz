@@ -44,4 +44,22 @@ class Cups extends Table
         }
         return $result;
     }
+
+    public function getDistance(int $cupid, int $routeid, ?float $latitude, ?float $longitude, bool $start): ?float
+    {
+        $route = $this->find($cupid)->related('cups_routes')->where('id = ?', $routeid)->fetch()->ref('routeid');
+        if (!is_null($route)) {
+            if ($start) {
+                $pointLatitude = (float)$route->ref('point_from')->latitude;
+                $pointLongitude = (float)$route->ref('point_from')->longitude;
+            } else {
+                $pointLatitude = (float)$route->ref('point_to')->latitude;
+                $pointLongitude = (float)$route->ref('point_to')->longitude;
+            }
+            return ResultUtil::distance($pointLatitude, $pointLongitude, $latitude, $longitude);
+        } else {
+            return null;
+        }
+
+    }
 }

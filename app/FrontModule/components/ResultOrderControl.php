@@ -51,7 +51,8 @@ class ResultOrderControl extends Control
         $items = $this->results->getOrderedItems($this->cupid, true, $this->routeid);
         $this->getPage($items);
         $this->template->userid = $this->userid;
-        $this->template->route = $this->routes->find($this->routeid);
+        $this->template->route = $this->cups->find($this->cupid)->related('cups_routes')
+            ->where('id = ?', $this->routeid)->fetch()->ref('routeid');
         $this->template->render(__DIR__ . '/resultOrder.latte');
     }
 

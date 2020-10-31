@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App;
 
 use Nette\Configurator;
-use Tracy\Dumper;
 
 class Bootstrap
 {
@@ -19,7 +18,7 @@ class Bootstrap
 //        $configurator->setDebugMode('172.18.0.1');
 
 // Enable Nette Debugger for error visualisation & logging
-//        $configurator->setDebugMode(true);
+        $configurator->setDebugMode(true);
         $configurator->enableDebugger(APP_DIR . '/../log');
 
 // Specify folder for cache
