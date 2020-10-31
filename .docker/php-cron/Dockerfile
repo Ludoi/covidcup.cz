@@ -32,4 +32,5 @@ WORKDIR /var/www/app
 ADD ./.docker/conf/php-cron/scheduler /etc/cron.d/scheduler
 
 RUN crontab /etc/cron.d/scheduler
+RUN touch /etc/crontab /etc/cron.*/*
 CMD ["cron", "-f"]
