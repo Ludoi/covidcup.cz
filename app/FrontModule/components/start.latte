@@ -1,14 +1,27 @@
 {if $user->isLoggedIn()}
     <div class="card mb-3">
+        <div n:foreach="$flashes as $flash" class="alert alert-{$flash->type}">{$flash->message}</div>
         <div class="card-body">
             {if $firstPage}
                 <h4 class="card-title">Jdeme na to?</h4>
-                <p class="card-text">
-                    {if $beforeStart}
+                {if $beforeStart}
+                    <p class="card-text">
+                        Když budeš pokračovat, mobil se tě zeptá jestli povolíš této aplikaci přístup ke tvé poloze.
+                        Zvaž to a povol to :-) Společně s informací o startu a ukončení si posíláme i polohu,
+                        ať si můžeme ověřit, že nesedíš doma na gauči :-) Díky.
+                    </p>
+                    <p class="card-text">
                         {control preStart}
-                    {else}
+                    </p>
+                {else}
+                    <p class="card-text">
+                        Teď bys měl(a) běžet. Až doběhneš do cíle, klikni na tlačítko Chci zastavit a potvrď ukončení
+                        závodu stiskem tlačítka Stop.
+                    </p>
+                    <p class="card-text">
                         <a n:href="Stop!" class="btn btn-primary">Chci zastavit</a>
-                    {/if}
+                    </p>
+                {/if}
                 </p>
             {else}
                 {if $beforeStart}

@@ -97,7 +97,10 @@ class StartControl extends Control
             $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
-            $this->measurements->insertStart($racerid, (int)$values->routeid, $now, $latitude, $longitude);
+            $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$values->routeid,
+                $latitude, $longitude, true);
+            $this->measurements->insertStart($racerid, (int)$values->routeid, $now, $latitude, $longitude, $startDistance);
+            $this->flashMessage('Odstartováno!', 'success');
         }
         $this->firstPage = true;
         $this->redrawControl();
@@ -125,7 +128,10 @@ class StartControl extends Control
             $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
-            $measurementid = $this->measurements->updateFinish($racerid, $now, $latitude, $longitude);
+            $measurement = $this->measurements->findOneBy(['userid' => $racerid, 'active' => true]);
+            $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$measurement->routeid,
+                $latitude, $longitude, false);
+            $measurementid = $this->measurements->updateFinish($racerid, $now, $latitude, $longitude, $finishDistance);
             if (!is_null($measurementid)) {
                 $measurement = $this->measurements->find($measurementid);
                 if (!is_null($measurement)) {
@@ -135,6 +141,7 @@ class StartControl extends Control
                         'created' => $now, 'active' => true, 'guaranteed' => true, 'measurementid' => $measurementid]);
                 }
             }
+            $this->flashMessage('Ukončeno!', 'success');
         }
         $this->firstPage = true;
         $this->redrawControl();
