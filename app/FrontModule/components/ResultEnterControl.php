@@ -29,6 +29,7 @@ class ResultEnterControl extends Control
     private bool $addItem = false;
     private bool $addItemGPX = false;
     private int $userid;
+    private int $racerid;
     private GPXQueue $GPXQueue;
 
     public function __construct(int $cupid, ?int $routeid, Results $results, Users $users, User $user, Cups $cups, GPXQueue $GPXQueue)
@@ -40,6 +41,7 @@ class ResultEnterControl extends Control
         $this->user = $user;
         $this->cups = $cups;
         $this->userid = (int)$this->user->getId();
+        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
         $this->GPXQueue = $GPXQueue;
     }
 
@@ -102,7 +104,7 @@ class ResultEnterControl extends Control
             $filename = sprintf('result_%05d-%05d_%s.gpx', $this->userid, $values->routeid, $now->format('Y-m-d-H-i-s'));
             $moveDir = APP_DIR . '/../files/gpx/results/' . $filename;
             $values->gpxFile->move($moveDir);
-            $this->GPXQueue->publish($this->userid, (int)$values->routeid, $filename);
+            $this->GPXQueue->publish($this->racerid, (int)$values->routeid, $filename);
         }
         if (!$form->hasErrors()) {
             $this->flashMessage('Soubor uložen ke zpracování.');
@@ -145,7 +147,7 @@ class ResultEnterControl extends Control
             $parts = explode(':', $values->time);
             $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
             $now = new \DateTime();
-            $this->results->insertItem($this->cups->getActive(), (int)$values->routeid, $this->userid, $values->startTime, $time);
+            $this->results->insertItem($this->cups->getActive(), (int)$values->routeid, $this->racerid, $values->startTime, $time);
         }
         $this->addItem = $form->hasErrors();
         if (!$form->hasErrors()) {
@@ -156,7 +158,7 @@ class ResultEnterControl extends Control
 
     public function render(): void
     {
-        $items = $this->results->getItems($this->cupid, true, $this->routeid, $this->userid);
+        $items = $this->results->getItems($this->cupid, true, $this->routeid, null);
         $this->getPage($items);
         $this->template->addItem = $this->addItem;
         $this->template->addItemGPX = $this->addItemGPX;

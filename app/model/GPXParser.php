@@ -71,9 +71,10 @@ class GPXParser
     public function getFinishPoint(): array {
         $point = [];
         if ($this->checkGpx()) {
-            $count = sizeof($this->gpx->trk->trkseg->trkpt);
-            $point['latitude'] = (float)$this->gpx->trk->trkseg->trkpt[$count - 1]['lat'];
-            $point['longitude'] = (float)$this->gpx->trk->trkseg->trkpt[$count - 1]['lon'];
+            $segmentCount = sizeof($this->gpx->trk->trkseg);
+            $count = sizeof($this->gpx->trk->trkseg[$segmentCount - 1]->trkpt);
+            $point['latitude'] = (float)$this->gpx->trk->trkseg[$segmentCount - 1]->trkpt[$count - 1]['lat'];
+            $point['longitude'] = (float)$this->gpx->trk->trkseg[$segmentCount - 1]->trkpt[$count - 1]['lon'];
         }
         return $point;
     }
@@ -96,8 +97,9 @@ class GPXParser
     public function getFinishTime(): ?DateTime
     {
         if ($this->checkGpx()) {
-            $count = sizeof($this->gpx->trk->trkseg->trkpt);
-            $timeStr = (string)$this->gpx->trk->trkseg->trkpt[$count - 1]->time;
+            $segmentCount = sizeof($this->gpx->trk->trkseg);
+            $count = sizeof($this->gpx->trk->trkseg[$segmentCount - 1]->trkpt);
+            $timeStr = (string)$this->gpx->trk->trkseg[$segmentCount - 1]->trkpt[$count - 1]->time;
             if ($timeStr != '') {
                 $time = new DateTime($timeStr);
                 return $time;

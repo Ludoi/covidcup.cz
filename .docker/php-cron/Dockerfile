@@ -31,5 +31,5 @@ RUN if [ $WITH_XDEBUG = "true" ] ; then \
 WORKDIR /var/www/app
 ADD ./.docker/conf/php-cron/scheduler /etc/cron.d/scheduler
 ADD ./.docker/conf/php-cron/myentry.sh /usr/bin/myentry.sh
-RUN chmod +x /usr/bin/myentry.sh && crontab /etc/cron.d/scheduler
+RUN chmod +x /usr/bin/myentry.sh && crontab /etc/cron.d/scheduler && touch /test_file
 CMD /bin/sh /usr/bin/myentry.sh

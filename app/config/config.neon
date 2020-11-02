@@ -65,6 +65,7 @@ services:
 	- App\StartControlFactory
 	- App\Console\WeatherCommand
 	- App\Console\ResultsCommand
+	- App\ResultsCalculation
 
 rabbitmq:
 	connections:
