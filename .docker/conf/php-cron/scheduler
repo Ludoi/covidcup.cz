@@ -1,3 +1,4 @@
-31 */4 * * * php bin/console.php weather:download >> /test_file
-0 21 * * * php bin/console.php results:calculate >> /test_file
+31 */4 * * * /usr/local/bin/php /var/www/app/bin/console.php weather:download >> /test_file
+35 */4 * * * /usr/local/bin/php /var/www/app/bin/console.php weather:assign >> /test_file
+0 21 * * * /usr/local/bin/php /var/www/app/bin/console.php results:calculate >> /test_file
 # last line :-)

@@ -49,6 +49,7 @@ services:
 	results: App\Results
 	usersChanges: App\UsersChanges
 	cupsRacers: App\CupsRacers
+	cupsRoutes: App\CupsRoutes
 	articles: App\Articles
 	weather: App\Weather
 	measurements: App\Measurements
@@ -63,7 +64,9 @@ services:
 	- App\ResultEnterControlFactory
 	- App\ResultOrderControlFactory
 	- App\StartControlFactory
-	- App\Console\WeatherCommand
+	- App\Console\WeatherDownloadCommand
+	- App\WeatherAssign
+	- App\Console\WeatherAssignCommand
 	- App\Console\ResultsCommand
 	- App\ResultsCalculation
 

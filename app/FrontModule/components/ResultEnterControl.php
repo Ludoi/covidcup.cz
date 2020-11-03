@@ -65,7 +65,13 @@ class ResultEnterControl extends Control
 
     public function handleDelete(int $id): void
     {
-        $this->results->find($id)->delete();
+        $result = $this->results->find($id);
+        if (!is_null($result)) {
+            $userid = $result->ref('userid')->userid;
+            if ($userid == $this->userid) {
+                $result->delete();
+            }
+        }
     }
 
     public function handleCancel(): void
@@ -163,6 +169,7 @@ class ResultEnterControl extends Control
         $this->template->addItem = $this->addItem;
         $this->template->addItemGPX = $this->addItemGPX;
         $this->template->userid = $this->userid;
+        $this->template->racerid = $this->racerid;
         $this->template->routeid = $this->routeid;
         $this->template->cup = $this->cups->find($this->cupid);
         $now = new \DateTime();

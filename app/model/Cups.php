@@ -30,6 +30,16 @@ class Cups extends Table
         }
     }
 
+    public function getRaceid(int $cupid, int $routeid): ?int
+    {
+        $race = $this->find($cupid)->related('cups_routes')->where('routeid = ?', $routeid)->fetch();
+        if (!is_null($race)) {
+            return (int)$race->id;
+        } else {
+            return null;
+        }
+    }
+
     public function isDateValid(int $cupid, \DateTime $dateTime, bool $untilToday): bool
     {
         $result = false;

@@ -35,7 +35,8 @@
                                     {/if}
                                     <td>
                                         <a href="{$presenter->link('Racer:default', $item->userid)}">{$item->ref('userid')->ref('userid')->nickname}</a>
-                                        {if ($item->userid == $userid)}<a n:href="Delete!, $item->id"
+                                        {if ($item->ref('userid')->userid == $userid)}<a
+                                            onclick="return confirm('Opravdu smazat?');" n:href="Delete!, $item->id"
                                             class="text-danger">
                                                 <svg width="1em" height="1em" viewBox="0 0 16 16"
                                                      class="bi bi-x-circle-fill" fill="currentColor"

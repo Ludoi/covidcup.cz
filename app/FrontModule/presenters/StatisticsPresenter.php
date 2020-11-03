@@ -12,6 +12,7 @@ namespace FrontModule;
 
 
 use App\Cups;
+use App\Results;
 use App\Routes;
 use App\Users;
 
@@ -21,13 +22,15 @@ class StatisticsPresenter extends BasePresenter
     private Routes $routes;
     private Cups $cups;
     private int $cupid;
+    private Results $results;
 
-    public function __construct(Users $users, Routes $routes, Cups $cups)
+    public function __construct(Users $users, Routes $routes, Cups $cups, Results $results)
     {
         $this->users = $users;
         $this->routes = $routes;
         $this->cups = $cups;
         $this->cupid = $cups->getActive();
+        $this->results = $results;
     }
 
     public function actionDefault() {
@@ -35,5 +38,6 @@ class StatisticsPresenter extends BasePresenter
         $this->template->maleCount = $this->users->findBy(['active' => true, 'gender' => 'm'])->count();
         $this->template->femaleCount = $this->users->findBy(['active' => true, 'gender' => 'f'])->count();
         $this->template->routesCount = $this->routes->findAll()->count();
+        $this->template->resultsCount = $this->results->findAll()->count();
     }
 }
