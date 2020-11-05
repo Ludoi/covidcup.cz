@@ -97,7 +97,7 @@ final class GPXConsumer implements IConsumer
         }
 
         $guaranteed = true;
-        $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$messageData->routeid,
+        $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$messageData->raceid,
             $startPoint['latitude'], $startPoint['longitude'], true);
         if (is_null($startDistance) || $startDistance > 0.2) {
             // start point uncertain
@@ -106,7 +106,7 @@ final class GPXConsumer implements IConsumer
             $guaranteed = false;
         }
 
-        $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$messageData->routeid,
+        $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$messageData->raceid,
             $finishPoint['latitude'], $finishPoint['longitude'], false);
         if (is_null($finishDistance) || $finishDistance > 0.2) {
             // finish point uncertain
@@ -115,13 +115,13 @@ final class GPXConsumer implements IConsumer
             $guaranteed = false;
         }
 
-        $measurement = $this->measurements->insertGPXDetails((int)$messageData->racerid, (int)$messageData->routeid,
+        $measurement = $this->measurements->insertGPXDetails((int)$messageData->racerid, (int)$messageData->raceid,
             $startTime, $startPoint['latitude'], $startPoint['longitude'], $startDistance, $finishTime,
             $finishPoint['latitude'], $finishPoint['longitude'], $finishDistance, $zipFilename, $fileHash);
         if (!is_null($measurement)) {
             $duration = (int)$measurement->finish_time->format('U') - (int)$measurement->start_time->format('U');
-            $this->results->insert(['cupid' => $this->cups->getActive(), 'routeid' => $measurement->routeid,
-                'userid' => (int)$messageData->racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
+            $this->results->insert(['cupid' => $this->cups->getActive(), 'raceid' => $measurement->raceid,
+                'racerid' => (int)$messageData->racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
                 'created' => $now, 'active' => true, 'guaranteed' => $guaranteed, 'measurementid' => $measurement->id]);
         }
 

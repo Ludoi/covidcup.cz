@@ -34,6 +34,7 @@ class StatisticsPresenter extends BasePresenter
     }
 
     public function actionDefault() {
+        $this->template->cacheid = 'statistics-main';
         $this->template->racersCount = $this->users->findBy(['active' => true])->count();
         $this->template->maleCount = $this->users->findBy(['active' => true, 'gender' => 'm'])->count();
         $this->template->femaleCount = $this->users->findBy(['active' => true, 'gender' => 'f'])->count();

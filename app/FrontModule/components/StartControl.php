@@ -18,7 +18,7 @@ use Nette\Security\User;
 
 class StartControl extends Control
 {
-    private ?int $routeid = null;
+    private ?int $raceid = null;
     private Measurements $measurements;
     private Cups $cups;
     private User $user;
@@ -54,7 +54,7 @@ class StartControl extends Control
         foreach ($cup->related('cups_routes', 'cupid')->fetchAll() as $route) {
             $routes[$route->id] = $route->ref('routeid')->description;
         };
-        $form->addSelect('routeid', 'Trasa:', $routes)->setPrompt('Vyber trasu')
+        $form->addSelect('raceid', 'Trasa:', $routes)->setPrompt('Vyber trasu')
             ->setRequired('Vyplň trasu.');
         $form->addProtection();
         $form->addSubmit('send', 'Chci startovat!');
@@ -67,7 +67,7 @@ class StartControl extends Control
     {
         if ($form->isValid()) {
             $values = $form->getValues();
-            $this->routeid = (int)$values->routeid;
+            $this->raceid = (int)$values->raceid;
             $this->firstPage = false;
         } else {
             $this->firstPage = true;
@@ -78,7 +78,7 @@ class StartControl extends Control
     public function createComponentStart(): Form
     {
         $form = new BootstrapForm();
-        $form->addHidden('routeid', $this->routeid);
+        $form->addHidden('raceid', $this->raceid);
         $form->addHidden('latitude')->setHtmlId('latitude');
         $form->addHidden('longitude')->setHtmlId('longitude');
         $form->addProtection();
@@ -97,9 +97,9 @@ class StartControl extends Control
             $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
-            $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$values->routeid,
+            $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$values->raceid,
                 $latitude, $longitude, true);
-            $this->measurements->insertStart($racerid, (int)$values->routeid, $now, $latitude, $longitude, $startDistance);
+            $this->measurements->insertStart($racerid, (int)$values->raceid, $now, $latitude, $longitude, $startDistance);
             $this->flashMessage('Odstartováno!', 'success');
         }
         $this->firstPage = true;
@@ -109,7 +109,7 @@ class StartControl extends Control
     public function createComponentFinish(): Form
     {
         $form = new BootstrapForm();
-        $form->addHidden('routeid', $this->routeid);
+        $form->addHidden('raceid', $this->raceid);
         $form->addHidden('latitude')->setHtmlId('latitude');
         $form->addHidden('longitude')->setHtmlId('longitude');
         $form->addProtection();
@@ -128,16 +128,16 @@ class StartControl extends Control
             $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
-            $measurement = $this->measurements->findOneBy(['userid' => $racerid, 'active' => true]);
-            $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$measurement->routeid,
+            $measurement = $this->measurements->findOneBy(['racerid' => $racerid, 'active' => true]);
+            $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$measurement->raceid,
                 $latitude, $longitude, false);
             $measurementid = $this->measurements->updateFinish($racerid, $now, $latitude, $longitude, $finishDistance);
             if (!is_null($measurementid)) {
                 $measurement = $this->measurements->find($measurementid);
                 if (!is_null($measurement)) {
                     $duration = (int)$measurement->finish_time->format('U') - (int)$measurement->start_time->format('U');
-                    $this->results->insert(['cupid' => $this->cups->getActive(), 'routeid' => $measurement->routeid,
-                        'userid' => $racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
+                    $this->results->insert(['cupid' => $this->cups->getActive(), 'raceid' => $measurement->raceid,
+                        'racerid' => $racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
                         'created' => $now, 'active' => true, 'guaranteed' => true, 'measurementid' => $measurementid]);
                 }
             }

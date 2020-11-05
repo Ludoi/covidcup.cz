@@ -36,7 +36,6 @@ services:
 	loggerHandler: Ludoi\Utils\Logger\Handler\FileHandler(%logger.folder%)
 	logger: Ludoi\Utils\Logger\Logger(@loggerHandler)
 	database: @Nette\Database\Context
-	cache: @Nette\Caching\IStorage
 	authenticator: App\Authenticate
 	routerFactory: App\RouterFactory
 	router: @routerFactory::createRouter
@@ -69,6 +68,10 @@ services:
 	- App\Console\WeatherAssignCommand
 	- App\Console\ResultsCommand
 	- App\ResultsCalculation
+	- App\ResultsOverall
+	- App\Categories
+	- App\RacersCategories
+	- App\Console\ResultsCategoriesCommand
 
 rabbitmq:
 	connections:

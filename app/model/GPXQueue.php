@@ -27,9 +27,9 @@ final class GPXQueue
     }
 
 
-    public function publish(int $racerid, int $routeid, string $filename): void
+    public function publish(int $racerid, int $raceid, string $filename): void
     {
-        $json = json_encode(['racerid' => $racerid, 'routeid' => $routeid, 'filename' => $filename]);
+        $json = json_encode(['racerid' => $racerid, 'raceid' => $raceid, 'filename' => $filename]);
         $headers = [];
 
         $this->gpxProducer->publish($json, $headers);

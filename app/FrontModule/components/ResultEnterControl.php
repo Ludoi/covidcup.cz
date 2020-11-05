@@ -23,7 +23,7 @@ class ResultEnterControl extends Control
     private User $user;
     private Cups $cups;
     private int $cupid;
-    private ?int $routeid;
+    private ?int $raceid;
     private int $itemsPerPage = 20;
     private int $page = 1;
     private bool $addItem = false;
@@ -32,10 +32,10 @@ class ResultEnterControl extends Control
     private int $racerid;
     private GPXQueue $GPXQueue;
 
-    public function __construct(int $cupid, ?int $routeid, Results $results, Users $users, User $user, Cups $cups, GPXQueue $GPXQueue)
+    public function __construct(int $cupid, ?int $raceid, Results $results, Users $users, User $user, Cups $cups, GPXQueue $GPXQueue)
     {
         $this->cupid = $cupid;
-        $this->routeid = $routeid;
+        $this->raceid = $raceid;
         $this->results = $results;
         $this->users = $users;
         $this->user = $user;
@@ -67,7 +67,7 @@ class ResultEnterControl extends Control
     {
         $result = $this->results->find($id);
         if (!is_null($result)) {
-            $userid = $result->ref('userid')->userid;
+            $userid = $result->ref('racerid')->userid;
             if ($userid == $this->userid) {
                 $result->delete();
             }
@@ -83,17 +83,17 @@ class ResultEnterControl extends Control
     public function createComponentAddItemGPX(): Form
     {
         $form = new BootstrapForm();
-        if (!is_null($this->routeid)) {
-            $form->addHidden('routeid', $this->routeid);
+        if (!is_null($this->raceid)) {
+            $form->addHidden('raceid', $this->raceid);
         } else {
             $routes = [];
             foreach ($this->cups->find($this->cupid)
                          ->related('cups_routes', 'cupid')->fetchAll() as $route) {
                 $routes[$route->id] = $route->ref('routeid')->description;
             };
-            $form->addSelect('routeid', 'Trasa:', $routes)->setRequired(true)->setPrompt('vyber trasu');
+            $form->addSelect('raceid', 'Trasa:', $routes)->setRequired(true)->setPrompt('vyber trasu');
         }
-        $form->addUpload('gpxFile', 'Soubor GPX:');
+        $form->addUpload('gpxFile', 'Soubor GPX:')->getControlPrototype()->setAttribute('class', 'form-control-file');
         $form->addProtection();
         $form->addSubmit('send', 'Přidat');
         $form->onSubmit[] = [$this, 'processAddItemGPX'];
@@ -107,10 +107,10 @@ class ResultEnterControl extends Control
         if ($form->isValid()) {
             $values = $form->getValues();
             $now = new \DateTime();
-            $filename = sprintf('result_%05d-%05d_%s.gpx', $this->userid, $values->routeid, $now->format('Y-m-d-H-i-s'));
+            $filename = sprintf('result_%05d-%05d_%s.gpx', $this->racerid, $values->raceid, $now->format('Y-m-d-H-i-s'));
             $moveDir = APP_DIR . '/../files/gpx/results/' . $filename;
             $values->gpxFile->move($moveDir);
-            $this->GPXQueue->publish($this->racerid, (int)$values->routeid, $filename);
+            $this->GPXQueue->publish($this->racerid, (int)$values->raceid, $filename);
         }
         if (!$form->hasErrors()) {
             $this->flashMessage('Soubor uložen ke zpracování.');
@@ -121,15 +121,15 @@ class ResultEnterControl extends Control
     public function createComponentAddItem(): Form
     {
         $form = new BootstrapForm();
-        if (!is_null($this->routeid)) {
-            $form->addHidden('routeid', $this->routeid);
+        if (!is_null($this->raceid)) {
+            $form->addHidden('raceid', $this->raceid);
         } else {
             $routes = [];
             foreach ($this->cups->find($this->cupid)
                          ->related('cups_routes', 'cupid')->fetchAll() as $route) {
                 $routes[$route->id] = $route->ref('routeid')->description;
             };
-            $form->addSelect('routeid', 'Trasa:', $routes)->setRequired(true)->setPrompt('vyber trasu');
+            $form->addSelect('raceid', 'Trasa:', $routes)->setRequired(true)->setPrompt('vyber trasu');
         }
         $form->addDateTime('startTime', 'Čas startu:')->setRequired(true)->getControlPrototype()
             ->setAttribute('data-target', '#startTimePicker')
@@ -153,24 +153,24 @@ class ResultEnterControl extends Control
             $parts = explode(':', $values->time);
             $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
             $now = new \DateTime();
-            $this->results->insertItem($this->cups->getActive(), (int)$values->routeid, $this->racerid, $values->startTime, $time);
+            $this->results->insertItem($this->cups->getActive(), (int)$values->raceid, $this->racerid, $values->startTime, $time);
         }
         $this->addItem = $form->hasErrors();
         if (!$form->hasErrors()) {
-            $this->flashMessage('Výsledek uložen.');
+            $this->flashMessage('Výsledek uložen.', 'success');
         }
         $this->redrawControl();
     }
 
     public function render(): void
     {
-        $items = $this->results->getItems($this->cupid, true, $this->routeid, null);
+        $items = $this->results->getItems($this->cupid, true, $this->raceid, null);
         $this->getPage($items);
         $this->template->addItem = $this->addItem;
         $this->template->addItemGPX = $this->addItemGPX;
         $this->template->userid = $this->userid;
         $this->template->racerid = $this->racerid;
-        $this->template->routeid = $this->routeid;
+        $this->template->raceid = $this->raceid;
         $this->template->cup = $this->cups->find($this->cupid);
         $now = new \DateTime();
         $this->template->enterOpen = $this->cups->isDateValid($this->cupid, $now, false);
@@ -183,7 +183,7 @@ class ResultEnterControl extends Control
         $this->template->addItem = $this->addItem;
         $this->template->addItemGPX = $this->addItemGPX;
         $this->template->userid = $this->userid;
-        $this->template->routeid = $this->routeid;
+        $this->template->raceid = $this->raceid;
         $this->template->cup = $this->cups->find($this->cupid);
         $now = new \DateTime();
         $this->template->enterOpen = $this->cups->isDateValid($this->cupid, $now, false);

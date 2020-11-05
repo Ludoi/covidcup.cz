@@ -55,6 +55,11 @@
                 <li n:class="$presenter->isLinkCurrent('Registration:default')?active, nav-item">
                     <a class="nav-link" n:href="Registration:default">Registrovat se</a>
                 </li>
+                {if $user->isLoggedIn()}
+                    <li n:class="nav-item">
+                        <a class="nav-link" n:href="Results:default">Výsledky</a>
+                    </li>
+                {/if}
                 <li n:class="nav-item">
                     <a class="nav-link" n:href="Statistics:default">Statistiky</a>
                 </li>

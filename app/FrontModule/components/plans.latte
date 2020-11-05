@@ -20,7 +20,7 @@
                                 <thead>
                                 <tr>
                                     <th scope="col">Kdy</th>
-                                    {if is_null($routeid)}
+                                    {if is_null($raceid)}
                                         <th scope="col">Kam</th>{/if}
                                     <th scope="col">Kdo</th>
                                 </tr>
@@ -28,14 +28,14 @@
                                 <tbody>
                                 <tr n:foreach="$items as $item">
                                     <td>{$item->plan_date|date:'j.n.Y, H:i'}</td>
-                                    {if is_null($routeid)}
+                                    {if is_null($raceid)}
                                         <td>
-                                            <a href="{$presenter->link('Route:default', $item->routeid)}">{$item->ref('routeid')->description}</a>
+                                            <a href="{$presenter->link('Route:default', $item->raceid)}">{$item->ref('raceid')->ref('routeid')->description}</a>
                                         </td>
                                     {/if}
                                     <td>
-                                        <a href="{$presenter->link('Racer:default', $item->userid)}">{$item->ref('userid')->ref('userid')->nickname}</a>
-                                        {if ($item->ref('userid')->userid == $userid)}<a
+                                        <a href="{$presenter->link('Racer:default', $item->racerid)}">{$item->ref('racerid')->ref('userid')->nickname}</a>
+                                        {if ($item->ref('racerid')->userid == $userid)}<a
                                             onclick="return confirm('Opravdu smazat?');" n:href="Delete!, $item->id"
                                             class="text-danger">
                                                 <svg width="1em" height="1em" viewBox="0 0 16 16"

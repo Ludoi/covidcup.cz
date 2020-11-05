@@ -23,23 +23,25 @@ class PlanControl extends Control
     private User $user;
     private Cups $cups;
     private int $cupid;
-    private ?int $routeid;
+    private ?int $raceid;
     private int $itemsPerPage = 10;
     private int $page = 1;
     private bool $addItem = false;
     private int $userid;
+    private int $racerid;
     private bool $onlyOwn;
 
-    public function __construct(int $cupid, ?int $routeid, bool $onlyOwn, Plans $plans, Users $users, User $user, Cups $cups)
+    public function __construct(int $cupid, ?int $raceid, bool $onlyOwn, Plans $plans, Users $users, User $user, Cups $cups)
     {
         $this->cupid = $cupid;
-        $this->routeid = $routeid;
+        $this->raceid = $raceid;
         $this->plans = $plans;
         $this->users = $users;
         $this->user = $user;
         $this->cups = $cups;
         $this->onlyOwn = $onlyOwn;
         $this->userid = (int)$this->user->getId();
+        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
     }
 
     public function handlePage(int $page)
@@ -57,7 +59,7 @@ class PlanControl extends Control
     {
         $plan = $this->plans->find($id);
         if (!is_null($plan)) {
-            $userid = $plan->ref('userid')->userid;
+            $userid = $plan->ref('racerid')->userid;
             if ($userid == $this->userid) {
                 $plan->delete();
             }
@@ -73,14 +75,14 @@ class PlanControl extends Control
     {
         $form = new BootstrapForm();
         $cup = $this->cups->find($this->cupid);
-        if (!is_null($this->routeid)) {
-            $form->addHidden('routeid', $this->routeid);
+        if (!is_null($this->raceid)) {
+            $form->addHidden('raceid', $this->raceid);
         } else {
             $routes = [];
             foreach ($cup->related('cups_routes', 'cupid')->fetchAll() as $route) {
                 $routes[$route->id] = $route->ref('routeid')->description;
             };
-            $form->addSelect('routeid', 'Trasa:', $routes)->setPrompt('Vyber trasu')
+            $form->addSelect('raceid', 'Trasa:', $routes)->setPrompt('Vyber trasu')
                 ->setRequired('Vyplň trasu.');
         }
 
@@ -95,12 +97,13 @@ class PlanControl extends Control
 
     public function render(): void
     {
-        $items = $this->plans->getItems($this->cupid, true, $this->routeid,
-            $this->onlyOwn ? $this->userid : null);
+        $items = $this->plans->getItems($this->cupid, true, $this->raceid,
+            $this->onlyOwn ? $this->racerid : null);
         $this->getPage($items);
         $this->template->addItem = $this->addItem;
         $this->template->userid = $this->userid;
-        $this->template->routeid = $this->routeid;
+        $this->template->racerid = $this->racerid;
+        $this->template->raceid = $this->raceid;
         $this->template->render(__DIR__ . '/plans.latte');
     }
 
@@ -121,10 +124,10 @@ class PlanControl extends Control
                 $values->plan_date->format('U') > $cup->valid_to->format('U')) {
                 $form['plan_date']->addError("Termín musí být v rozsahu {$cup->valid_from->format('j.n.Y, H:i')} a {$cup->valid_to->format('j.n.Y, H:i')}");
             } else {
-                $racerid = $this->cups->getRacerid($this->cupid, $this->userid);
-                if (!is_null($racerid)) {
+                if (!is_null($this->racerid)) {
                     $this->addItem = false;
-                    $this->plans->insertItem($this->cupid, (int)$values->routeid, $racerid, $values->comment, $values->plan_date);
+                    $this->plans->insertItem($this->cupid, (int)$values->raceid, $this->racerid,
+                        $values->comment, $values->plan_date);
                     $this->flashMessage('Plán uložen.');
                 }
             }

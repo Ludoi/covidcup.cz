@@ -23,15 +23,15 @@ class ResultOrderControl extends Control
     private Cups $cups;
     private Routes $routes;
     private int $cupid;
-    private int $routeid;
+    private int $raceid;
     private int $itemsPerPage = 30;
     private int $page = 1;
     private int $userid;
 
-    public function __construct(int $cupid, int $routeid, Results $results, Users $users, User $user, Cups $cups, Routes $routes)
+    public function __construct(int $cupid, int $raceid, Results $results, Users $users, User $user, Cups $cups, Routes $routes)
     {
         $this->cupid = $cupid;
-        $this->routeid = $routeid;
+        $this->raceid = $raceid;
         $this->results = $results;
         $this->users = $users;
         $this->user = $user;
@@ -48,18 +48,19 @@ class ResultOrderControl extends Control
 
     public function render(): void
     {
-        $items = $this->results->getOrderedItems($this->cupid, true, $this->routeid);
+        $items = $this->results->getOrderedItems($this->cupid, true, $this->raceid);
         $this->getPage($items);
         $this->template->userid = $this->userid;
         $this->template->route = $this->cups->find($this->cupid)->related('cups_routes')
-            ->where('id = ?', $this->routeid)->fetch()->ref('routeid');
+            ->where('id = ?', $this->raceid)->fetch()->ref('routeid');
         $this->template->render(__DIR__ . '/resultOrder.latte');
     }
 
     private function getPage(Selection $items)
     {
         $lastPage = 0;
-        $this->template->items = $items->page($this->page, $this->itemsPerPage, $lastPage);
+//        $this->template->items = $items->page($this->page, $this->itemsPerPage, $lastPage);
+        $this->template->items = $items;
         $this->template->page = $this->page;
         $this->template->lastPage = $lastPage;
     }

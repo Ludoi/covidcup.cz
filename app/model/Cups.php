@@ -55,16 +55,16 @@ class Cups extends Table
         return $result;
     }
 
-    public function getDistance(int $cupid, int $routeid, ?float $latitude, ?float $longitude, bool $start): ?float
+    public function getDistance(int $cupid, int $raceid, ?float $latitude, ?float $longitude, bool $start): ?float
     {
-        $route = $this->find($cupid)->related('cups_routes')->where('id = ?', $routeid)->fetch()->ref('routeid');
-        if (!is_null($route)) {
+        $race = $this->find($cupid)->related('cups_routes')->where('id = ?', $raceid)->fetch()->ref('routeid');
+        if (!is_null($race)) {
             if ($start) {
-                $pointLatitude = (float)$route->ref('point_from')->latitude;
-                $pointLongitude = (float)$route->ref('point_from')->longitude;
+                $pointLatitude = (float)$race->ref('point_from')->latitude;
+                $pointLongitude = (float)$race->ref('point_from')->longitude;
             } else {
-                $pointLatitude = (float)$route->ref('point_to')->latitude;
-                $pointLongitude = (float)$route->ref('point_to')->longitude;
+                $pointLatitude = (float)$race->ref('point_to')->latitude;
+                $pointLongitude = (float)$race->ref('point_to')->longitude;
             }
             return ResultUtil::distance($pointLatitude, $pointLongitude, $latitude, $longitude);
         } else {

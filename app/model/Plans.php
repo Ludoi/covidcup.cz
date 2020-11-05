@@ -17,25 +17,25 @@ class Plans extends Table
 {
     protected ?string $tableName = 'plans';
 
-    public function insertItem(int $cupid, int $routeid, int $userid, string $comment, \DateTime $planDate)
+    public function insertItem(int $cupid, int $raceid, int $racerid, string $comment, \DateTime $planDate)
     {
         $now = new \DateTime();
-        $this->insert(['cupid' => $cupid, 'routeid' => $routeid, 'userid' => $userid, 'created' => $now,
+        $this->insert(['cupid' => $cupid, 'raceid' => $raceid, 'racerid' => $racerid, 'created' => $now,
             'comment' => $comment, 'plan_date' => $planDate, 'active' => true]);
     }
 
-    public function getItems(int $cupid, ?bool $active, ?int $routeid, ?int $userid): Selection
+    public function getItems(int $cupid, ?bool $active, ?int $raceid, ?int $racerid): Selection
     {
         $now = new \DateTime();
         $filter = ['cupid' => $cupid];
         if (!is_null($active)) {
             $filter[] = ['active' => $active];
         }
-        if (!is_null($routeid)) {
-            $filter[] = ['routeid' => $routeid];
+        if (!is_null($raceid)) {
+            $filter[] = ['raceid' => $raceid];
         }
-        if (!is_null($userid)) {
-            $filter[] = ['userid' => $userid];
+        if (!is_null($racerid)) {
+            $filter[] = ['racerid' => $racerid];
         }
         return $this->findBy($filter)->order('plan_date ASC')->where('plan_date > ?', $now);
     }

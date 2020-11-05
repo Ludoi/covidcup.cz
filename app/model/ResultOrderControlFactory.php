@@ -13,5 +13,5 @@ namespace App;
 
 interface ResultOrderControlFactory
 {
-    public function create(int $cupid, int $routeid): ResultOrderControl;
+    public function create(int $cupid, int $raceid): ResultOrderControl;
 }

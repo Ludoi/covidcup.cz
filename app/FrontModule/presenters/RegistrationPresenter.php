@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace FrontModule;
 
+use App\Categories;
 use App\Cups;
 use App\CupsRacers;
 use App\EmailQueue;
+use App\RacersCategories;
 use App\Users;
 use Contributte\FormsBootstrap\BootstrapForm;
 use Contributte\FormsBootstrap\Enums\RenderMode;
 use Latte\Engine;
-use Latte\Runtime\Template;
 use Nette\Application\UI\Form;
 use Nette\Utils\DateTime;
 use Nette\Utils\Strings;
-use Tracy\Dumper;
 
 /**
  * Registration presenter.
@@ -28,13 +28,18 @@ class RegistrationPresenter extends BasePresenter
     private EmailQueue $emailQueue;
     private Cups $cups;
     private CupsRacers $cupsRacers;
+    private RacersCategories $racersCategories;
+    private Categories $categories;
 
-    public function __construct(Users $users, EmailQueue $emailQueue, Cups $cups, CupsRacers $cupsRacers)
+    public function __construct(Users $users, EmailQueue $emailQueue, Cups $cups, CupsRacers $cupsRacers,
+                                RacersCategories $racersCategories, Categories $categories)
     {
         $this->users = $users;
         $this->cups = $cups;
         $this->emailQueue = $emailQueue;
         $this->cupsRacers = $cupsRacers;
+        $this->racersCategories = $racersCategories;
+        $this->categories = $categories;
     }
 
     public function renderDefault()
@@ -68,8 +73,14 @@ class RegistrationPresenter extends BasePresenter
     {
         $user = $this->users->findOneBy(['initial' => $initial]);
         if (!is_null($user)) {
+            $this->users->getDatabase()->beginTransaction();
             $this->users->activate((int)$user->id, true);
-            $this->cupsRacers->insert([ 'cupid' => $this->cups->getActive(), 'userid' => (int)$user->id ]);
+            $racer = $this->cupsRacers->insert(['cupid' => $this->cups->getActive(), 'userid' => (int)$user->id]);
+            $year = (int)(new DateTime())->format('Y');
+            $age = $year - $racer->ref('userid')->year;
+            $category = $this->categories->getCategory((int)$racer->cupid, (string)$racer->ref('userid')->gender, $age);
+            $this->racersCategories->insert(['racerid' => $racer->id, 'catid' => $category]);
+            $this->users->getDatabase()->commit();
             $this->flashMessage('Přihlášení dokončeno.', 'success');
         }
         $this->redirect('Homepage:default');

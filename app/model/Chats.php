@@ -18,10 +18,10 @@ class Chats extends Table
 {
     protected ?string $tableName = 'chat';
 
-    public function insertItem(int $cupid, int $userid, string $content, string $tcpip)
+    public function insertItem(int $cupid, int $racerid, string $content, string $tcpip)
     {
         $now = new DateTime();
-        $this->insert(['cupid' => $cupid, 'content' => $content, 'tcpip' => $tcpip, 'created' => $now, 'userid' => $userid, 'active' => true]);
+        $this->insert(['cupid' => $cupid, 'content' => $content, 'tcpip' => $tcpip, 'created' => $now, 'racerid' => $racerid, 'active' => true]);
     }
 
     public function getItems(int $cupid, ?bool $active): Selection

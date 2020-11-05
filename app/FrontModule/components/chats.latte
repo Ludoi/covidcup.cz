@@ -12,7 +12,7 @@
                         <dl>
                             {foreach $items as $item}
                                 <dt class="text-light">{$item->created|date:'j.n.Y, H:i:s'}
-                                    <a href="{$presenter->link('Racer:default', $item->userid)}">{$item->ref('userid')->ref('userid')->nickname}</a>
+                                    <a href="{$presenter->link('Racer:default', $item->racerid)}">{$item->ref('racerid')->ref('userid')->nickname}</a>
                                 </dt>
                                 <dd>{$item->content}</dd>
                             {/foreach}

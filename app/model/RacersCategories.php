@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App;
 
 
-interface ResultEnterControlFactory
+class RacersCategories extends Table
 {
-    public function create(int $cupid, ?int $raceid): ResultEnterControl;
+    protected ?string $tableName = 'racers_categories';
 }

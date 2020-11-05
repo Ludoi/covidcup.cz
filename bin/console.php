@@ -16,7 +16,6 @@ define('APP_DIR', WWW_DIR . '/app');
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../app/Bootstrap.php';
 
-exit(App\Bootstrap::boot()
-    ->createContainer()
-    ->getByType(Contributte\Console\Application::class)
-    ->run());
+$container = \App\Bootstrap::boot()->createContainer();
+$container->getService('database')->query("SET time_zone = ?;", date_default_timezone_get());
+exit($container->getByType(Contributte\Console\Application::class)->run());

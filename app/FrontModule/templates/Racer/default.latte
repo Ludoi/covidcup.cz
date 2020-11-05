@@ -6,7 +6,17 @@
                     <div class="col-lg-12 col-md-7 col-sm-6">
                         <div class="row">
                             <div class="col-sm-6">
-                                {control planControl}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">{$userInfo->nickname}</h4>
+                                        <dl>
+                                            <dt>Rok narození:</dt>
+                                            <dd>{$userInfo->year}</dd>
+                                            <dt>Pohlaví:</dt>
+                                            <dd>{$userInfo->gender == 'm' ? 'muž' : 'žena'}</dd>
+                                        </dl>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

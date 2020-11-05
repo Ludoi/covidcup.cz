@@ -12,10 +12,10 @@ namespace FrontModule;
 
 
 use App\Cups;
+use App\CupsRacers;
 use App\PlanControl;
 use App\PlanControlFactory;
 use App\Users;
-use Nette\Security\User;
 
 class RacerPresenter extends BaseSignPresenter
 {
@@ -24,13 +24,16 @@ class RacerPresenter extends BaseSignPresenter
     private PlanControlFactory $planControlFactory;
     private Cups $cups;
     private int $cupid;
+    private CupsRacers $cupsRacers;
 
-    public function __construct(Users $users, PlanControlFactory $planControlFactory, Cups $cups)
+    public function __construct(Users $users, PlanControlFactory $planControlFactory, Cups $cups,
+                                CupsRacers $cupsRacers)
     {
         $this->users = $users;
         $this->planControlFactory = $planControlFactory;
         $this->cups = $cups;
         $this->cupid = $cups->getActive();
+        $this->cupsRacers = $cupsRacers;
     }
 
     protected function createComponentPlanControl(): PlanControl
@@ -44,10 +47,21 @@ class RacerPresenter extends BaseSignPresenter
     {
         if (is_null($id))
         {
-            $user = $this->users->getUser($this->user->getId());
+            $user = $this->users->find((int)$this->user->getId());
             $this->userid = (int)$user->id;
         } else {
-            $this->userid = $id;
+            $cupsRacer = $this->cupsRacers->find($id);
+            if (is_null($cupsRacer)) {
+                $this->flashMessage('Závodník nenalezen.');
+                $this->redirect('Homepage:');
+            }
+            $this->userid = (int)$cupsRacer->userid;
+            $user = $this->users->find($this->userid);
         }
+        if (is_null($user)) {
+            $this->flashMessage('Závodník nenalezen.');
+            $this->redirect('Homepage:');
+        }
+        $this->template->userInfo = $user;
     }
 }

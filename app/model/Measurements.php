@@ -17,26 +17,26 @@ class Measurements extends Table
 {
     protected ?string $tableName = 'measurements';
 
-    public function isActive(int $userid): bool
+    public function isActive(int $racerid): bool
     {
-        return !is_null($this->findOneBy(['userid' => $userid, 'active' => true]));
+        return !is_null($this->findOneBy(['racerid' => $racerid, 'active' => true]));
     }
 
-    public function insertStart(int $userid, int $routeid, \DateTime $startTime, ?float $startLatitude,
+    public function insertStart(int $racerid, int $raceid, \DateTime $startTime, ?float $startLatitude,
                                 ?float $startLongitude, ?float $startDistance): void
     {
-        if (!$this->isActive($userid)) {
-            $this->insert(['userid' => $userid, 'routeid' => $routeid, 'start_time' => $startTime,
+        if (!$this->isActive($racerid)) {
+            $this->insert(['racerid' => $racerid, 'raceid' => $raceid, 'start_time' => $startTime,
                 'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude,
                 'start_distance' => $startDistance, 'active' => true]);
         }
     }
 
-    public function updateFinish(int $userid, \DateTime $finishTime, ?float $finishLatitude,
+    public function updateFinish(int $racerid, \DateTime $finishTime, ?float $finishLatitude,
                                  ?float $finishLongitude, ?float $finishDistance): ?int
     {
-        if ($this->isActive($userid)) {
-            $measurement = $this->findOneBy(['userid' => $userid, 'active' => true]);
+        if ($this->isActive($racerid)) {
+            $measurement = $this->findOneBy(['racerid' => $racerid, 'active' => true]);
             $measurement->update(['finish_time' => $finishTime,
                 'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude,
                 'finish_distance' => $finishDistance, 'active' => false]);
@@ -46,11 +46,11 @@ class Measurements extends Table
         }
     }
 
-    public function insertGPXDetails(int $userid, int $routeid, \DateTime $startTime, ?float $startLatitude,
+    public function insertGPXDetails(int $racerid, int $raceid, \DateTime $startTime, ?float $startLatitude,
                                      ?float $startLongitude, ?float $startDistance, \DateTime $finishTime, ?float $finishLatitude,
                                      ?float $finishLongitude, ?float $finishDistance, string $gpxFile, string $fileHash): ActiveRow
     {
-        return $this->insert(['userid' => $userid, 'routeid' => $routeid, 'start_time' => $startTime,
+        return $this->insert(['racerid' => $racerid, 'raceid' => $raceid, 'start_time' => $startTime,
             'start_latitude' => $startLatitude, 'start_longitude' => $startLongitude,
             'start_distance' => $startDistance, 'finish_time' => $finishTime,
             'finish_latitude' => $finishLatitude, 'finish_longitude' => $finishLongitude,

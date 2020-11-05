@@ -34,10 +34,12 @@ abstract class BasePresenter extends Presenter
         $this->setLayout('layout');
         if ($this->user->isLoggedIn()) {
             $racerid = $this->baseCups->getRacerid($this->baseCups->getActive(), $this->user->getId());
-            $listOfMessages = $this->baseMessages->getUnreadMessages($racerid);
-            foreach ($listOfMessages as $message) {
-                $this->flashMessage((string)$message->message, (string)$message->type);
-                $message->update(['displayed' => true]);
+            if (!is_null($racerid)) {
+                $listOfMessages = $this->baseMessages->getUnreadMessages($racerid);
+                foreach ($listOfMessages as $message) {
+                    $this->flashMessage((string)$message->message, (string)$message->type);
+                    $message->update(['displayed' => true]);
+                }
             }
         }
     }

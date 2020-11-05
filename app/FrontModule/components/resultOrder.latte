@@ -22,7 +22,7 @@
                         <tr n:foreach="$items as $item">
                             <td>{$iterator->getCounter()}</td>
                             <td>
-                                <a href="{$presenter->link('Racer:default', $item->userid)}">{$item->ref('userid')->ref('userid')->nickname}</a>
+                                <a href="{$presenter->link('Racer:default', $item->racerid)}">{$item->ref('racerid')->ref('userid')->nickname}</a>
                             </td>
                             <!--                            <td></td> -->
                             <td class="text-right">{App\ResultUtil::secondsTime($item->time_seconds)|date: '%h:%I:%S'}</td>
