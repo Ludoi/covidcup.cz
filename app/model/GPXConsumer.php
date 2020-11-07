@@ -39,6 +39,7 @@ final class GPXConsumer implements IConsumer
 
         $headers = $message->headers;
 
+        $cupid = (int)$messageData->cupid;
         $racerid = (int)$messageData->racerid;
         $filename = $directory . $messageData->filename;
         if (!file_exists($filename)) {
@@ -89,15 +90,32 @@ final class GPXConsumer implements IConsumer
             return IConsumer::MESSAGE_ACK;
         }
 
-        if (!$this->cups->isDateValid($this->cups->getActive(), $startTime, true)) {
+        $duration = (int)$finishTime->format('U') - (int)$startTime->format('U');
+        if ($duration < 0) {
+            // time is wrong
+            $this->messages->insertMessage($racerid, 'Celkový čas je záporný. Výsledek nebyl uložen.',
+                'danger', $messageCreator);
+            return IConsumer::MESSAGE_ACK;
+        }
+
+        if (!$this->cups->isDateValid($cupid, $startTime, true)) {
             // date from file is invalid
             $this->messages->insertMessage($racerid, 'Čas startu je mimo dobu konání poháru. Výsledek nebyl uložen.',
                 'danger', $messageCreator);
             return IConsumer::MESSAGE_ACK;
         }
 
+        $correct = $this->results->isItemCorrect($cupid, (int)$messageData->raceid,
+            (int)$messageData->racerid, $startTime, $duration);
+        if (!$correct) {
+            // such start time is already stored
+            $this->messages->insertMessage($racerid, 'Výsledek s podobným časem startu už byl uložen. Tento výsledek nebyl uložen.',
+                'danger', $messageCreator);
+            return IConsumer::MESSAGE_ACK;
+        }
+
         $guaranteed = true;
-        $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$messageData->raceid,
+        $startDistance = $this->cups->getDistance($cupid, (int)$messageData->raceid,
             $startPoint['latitude'], $startPoint['longitude'], true);
         if (is_null($startDistance) || $startDistance > 0.2) {
             // start point uncertain
@@ -106,7 +124,7 @@ final class GPXConsumer implements IConsumer
             $guaranteed = false;
         }
 
-        $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$messageData->raceid,
+        $finishDistance = $this->cups->getDistance($cupid, (int)$messageData->raceid,
             $finishPoint['latitude'], $finishPoint['longitude'], false);
         if (is_null($finishDistance) || $finishDistance > 0.2) {
             // finish point uncertain
@@ -119,8 +137,7 @@ final class GPXConsumer implements IConsumer
             $startTime, $startPoint['latitude'], $startPoint['longitude'], $startDistance, $finishTime,
             $finishPoint['latitude'], $finishPoint['longitude'], $finishDistance, $zipFilename, $fileHash);
         if (!is_null($measurement)) {
-            $duration = (int)$measurement->finish_time->format('U') - (int)$measurement->start_time->format('U');
-            $this->results->insert(['cupid' => $this->cups->getActive(), 'raceid' => $measurement->raceid,
+            $this->results->insert(['cupid' => $cupid, 'raceid' => $measurement->raceid,
                 'racerid' => (int)$messageData->racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
                 'created' => $now, 'active' => true, 'guaranteed' => $guaranteed, 'measurementid' => $measurement->id]);
         }

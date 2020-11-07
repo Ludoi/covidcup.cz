@@ -110,7 +110,7 @@ class ResultEnterControl extends Control
             $filename = sprintf('result_%05d-%05d_%s.gpx', $this->racerid, $values->raceid, $now->format('Y-m-d-H-i-s'));
             $moveDir = APP_DIR . '/../files/gpx/results/' . $filename;
             $values->gpxFile->move($moveDir);
-            $this->GPXQueue->publish($this->racerid, (int)$values->raceid, $filename);
+            $this->GPXQueue->publish($this->cupid, $this->racerid, (int)$values->raceid, $filename);
         }
         if (!$form->hasErrors()) {
             $this->flashMessage('Soubor uložen ke zpracování.');
@@ -153,7 +153,13 @@ class ResultEnterControl extends Control
             $parts = explode(':', $values->time);
             $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
             $now = new \DateTime();
-            $this->results->insertItem($this->cups->getActive(), (int)$values->raceid, $this->racerid, $values->startTime, $time);
+            $correct = $this->results->isItemCorrect($this->cups->getActive(), (int)$values->raceid,
+                $this->racerid, $values->startTime, $time);
+            if ($correct) {
+                $this->results->insertItem($this->cups->getActive(), (int)$values->raceid, $this->racerid, $values->startTime, $time);
+            } else {
+                $form->addError('Výsledek s podobným časem startu už je uložen');
+            }
         }
         $this->addItem = $form->hasErrors();
         if (!$form->hasErrors()) {

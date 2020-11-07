@@ -18,7 +18,9 @@ class Bootstrap
 //        $configurator->setDebugMode('172.18.0.1');
 
 // Enable Nette Debugger for error visualisation & logging
-//        $configurator->setDebugMode(true);
+        if (file_exists(APP_DIR . '/../.debug')) {
+            $configurator->setDebugMode(TRUE);
+        }
         $configurator->enableDebugger(APP_DIR . '/../log');
 
 // Specify folder for cache

@@ -5,6 +5,7 @@ namespace FrontModule;
 
 use App\Cups;
 use App\Messages;
+use App\Users;
 use Nette\Application\UI\Presenter;
 
 /**
@@ -17,6 +18,12 @@ abstract class BasePresenter extends Presenter
 {
     private Cups $baseCups;
     private Messages $baseMessages;
+    private Users $baseUsers;
+
+    public function injectUsers(Users $users): void
+    {
+        $this->baseUsers = $users;
+    }
 
     public function injectCups(Cups $cups): void
     {
@@ -35,6 +42,7 @@ abstract class BasePresenter extends Presenter
         if ($this->user->isLoggedIn()) {
             $racerid = $this->baseCups->getRacerid($this->baseCups->getActive(), $this->user->getId());
             if (!is_null($racerid)) {
+                $this->template->userProfile = $this->baseUsers->find((int)$this->user->getId());
                 $listOfMessages = $this->baseMessages->getUnreadMessages($racerid);
                 foreach ($listOfMessages as $message) {
                     $this->flashMessage((string)$message->message, (string)$message->type);
