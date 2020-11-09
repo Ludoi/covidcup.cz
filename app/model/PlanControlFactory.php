@@ -13,5 +13,5 @@ namespace App;
 
 interface PlanControlFactory
 {
-    public function create(int $cupid, ?int $raceid, bool $onlyOwn): PlanControl;
+    public function create(int $cupid, ?int $raceid, bool $onlyOwn, array $onInsert): PlanControl;
 }

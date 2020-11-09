@@ -13,6 +13,8 @@ namespace App;
 use Contributte\FormsBootstrap\BootstrapForm;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\Database\Table\Selection;
 use Nette\Security\User;
 
@@ -22,6 +24,7 @@ class ResultEnterControl extends Control
     private Users $users;
     private User $user;
     private Cups $cups;
+    private Cache $cache;
     private int $cupid;
     private ?int $raceid;
     private int $itemsPerPage = 20;
@@ -31,8 +34,10 @@ class ResultEnterControl extends Control
     private int $userid;
     private int $racerid;
     private GPXQueue $GPXQueue;
+    private array $onInsert = [];
 
-    public function __construct(int $cupid, ?int $raceid, Results $results, Users $users, User $user, Cups $cups, GPXQueue $GPXQueue)
+    public function __construct(int $cupid, ?int $raceid, Results $results, Users $users, User $user, Cups $cups,
+                                GPXQueue $GPXQueue, IStorage $storage, array $onInsert)
     {
         $this->cupid = $cupid;
         $this->raceid = $raceid;
@@ -43,6 +48,13 @@ class ResultEnterControl extends Control
         $this->userid = (int)$this->user->getId();
         $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
         $this->GPXQueue = $GPXQueue;
+        $this->cache = new Cache($storage);
+        $this->onInsert = $onInsert;
+    }
+
+    private function cleanCache(int $raceid): void
+    {
+        $this->cache->clean([Cache::TAGS => ['resultEnter', "resultEnter_$raceid", "resultOrder_$raceid"]]);
     }
 
     public function handlePage(int $page)
@@ -70,6 +82,7 @@ class ResultEnterControl extends Control
             $userid = $result->ref('racerid')->userid;
             if ($userid == $this->userid) {
                 $result->delete();
+                $this->cleanCache((int)$result->raceid);
             }
         }
     }
@@ -114,6 +127,7 @@ class ResultEnterControl extends Control
         }
         if (!$form->hasErrors()) {
             $this->flashMessage('Soubor uložen ke zpracování.');
+            $this->onInsert;
         }
         $this->redrawControl();
     }
@@ -149,21 +163,23 @@ class ResultEnterControl extends Control
             $values = $form->getValues();
             if (!$this->cups->isDateValid($this->cupid, $values->startTime, true)) {
                 $form->addError('Čas startu není v době konání poháru.');
-            }
-            $parts = explode(':', $values->time);
-            $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
-            $now = new \DateTime();
-            $correct = $this->results->isItemCorrect($this->cups->getActive(), (int)$values->raceid,
-                $this->racerid, $values->startTime, $time);
-            if ($correct) {
-                $this->results->insertItem($this->cups->getActive(), (int)$values->raceid, $this->racerid, $values->startTime, $time);
             } else {
-                $form->addError('Výsledek s podobným časem startu už je uložen');
+                $parts = explode(':', $values->time);
+                $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
+                $correct = $this->results->isItemCorrect($this->cups->getActive(), (int)$values->raceid,
+                    $this->racerid, $values->startTime, $time);
+                if ($correct) {
+                    $this->results->insertItem($this->cups->getActive(), (int)$values->raceid, $this->racerid, $values->startTime, $time);
+                    $this->cleanCache((int)$values->raceid);
+                } else {
+                    $form->addError('Výsledek s podobným časem startu už je uložen');
+                }
             }
         }
         $this->addItem = $form->hasErrors();
         if (!$form->hasErrors()) {
             $this->flashMessage('Výsledek uložen.', 'success');
+            $this->onInsert;
         }
         $this->redrawControl();
     }

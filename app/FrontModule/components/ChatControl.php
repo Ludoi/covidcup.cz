@@ -13,6 +13,8 @@ namespace App;
 use Contributte\FormsBootstrap\BootstrapForm;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\Database\Table\Selection;
 use Nette\Security\User;
 
@@ -26,14 +28,19 @@ class ChatControl extends Control
     private int $itemsPerPage = 5;
     private int $page = 1;
     private bool $addItem = false;
+    private Cache $cache;
+    private array $onInsert = [];
 
-    public function __construct(int $cupid, Chats $chats, Users $users, User $user, Cups $cups)
+    public function __construct(int $cupid, Chats $chats, Users $users, User $user, Cups $cups, IStorage $storage,
+                                array $onInsert)
     {
         $this->cupid = $cupid;
         $this->chats = $chats;
         $this->users = $users;
         $this->user = $user;
         $this->cups = $cups;
+        $this->cache = new Cache($storage);
+        $this->onInsert = $onInsert;
     }
 
     public function handlePage(int $page): void
@@ -46,6 +53,12 @@ class ChatControl extends Control
     {
         $this->addItem = true;
     }
+
+    private function cleanCache(): void
+    {
+        $this->cache->clean([Cache::TAGS => ['chat']]);
+    }
+
 
     public function createComponentAddItem(): Form
     {
@@ -82,7 +95,9 @@ class ChatControl extends Control
             $racerid = $this->cups->getRacerid($this->cupid, $userid);
             if (!is_null($racerid)) {
                 $this->chats->insertItem($this->cupid, $racerid, $values->content, '');
+                $this->cleanCache();
                 $this->flashMessage('Příspěvek uložen.');
+                $this->onInsert;
             }
         }
         $this->redrawControl();

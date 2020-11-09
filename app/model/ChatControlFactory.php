@@ -13,5 +13,5 @@ namespace App;
 
 interface ChatControlFactory
 {
-    public function create(int $cupid): ChatControl;
+    public function create(int $cupid, array $onInsert): ChatControl;
 }

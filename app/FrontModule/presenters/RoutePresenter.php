@@ -12,7 +12,6 @@ namespace FrontModule;
 
 
 use App\Cups;
-use App\EmailQueue;
 use App\PlanControl;
 use App\PlanControlFactory;
 use App\Points;
@@ -21,10 +20,6 @@ use App\ResultEnterControlFactory;
 use App\ResultOrderControl;
 use App\ResultOrderControlFactory;
 use App\Routes;
-use App\StartControl;
-use App\StartControlFactory;
-use Contributte\RabbitMQ\Consumer\Consumer;
-use Tracy\Dumper;
 
 class RoutePresenter extends BasePresenter
 {
@@ -53,12 +48,18 @@ class RoutePresenter extends BasePresenter
 
     protected function createComponentPlanControl(): PlanControl
     {
-        return $this->planControlFactory->create($this->cupid, $this->routeid, false);
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->planControlFactory->create($this->cupid, $this->routeid, false, $onInsert);
     }
 
     protected function createComponentResultEnterControl(): ResultEnterControl
     {
-        return $this->resultEnterControlFactory->create($this->cupid, $this->routeid);
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->resultEnterControlFactory->create($this->cupid, $this->routeid, $onInsert);
     }
 
     protected function createComponentResultOrderControl(): ResultOrderControl

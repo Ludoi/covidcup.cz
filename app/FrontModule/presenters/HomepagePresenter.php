@@ -48,17 +48,26 @@ class HomepagePresenter extends BasePresenter {
 
     protected function createComponentChatControl(): ChatControl
     {
-        return $this->chatControlFactory->create($this->cupid);
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->chatControlFactory->create($this->cupid, $onInsert);
     }
 
     protected function createComponentPlanControl(): PlanControl
     {
-        return $this->planControlFactory->create($this->cupid, null, false);
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->planControlFactory->create($this->cupid, null, false, $onInsert);
     }
 
     protected function createComponentResultEnterControl(): ResultEnterControl
     {
-        return $this->resultEnterControlFactory->create($this->cupid, null);
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->resultEnterControlFactory->create($this->cupid, null, $onInsert);
     }
 
     public function actionDefault()

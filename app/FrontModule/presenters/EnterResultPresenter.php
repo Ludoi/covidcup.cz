@@ -28,7 +28,10 @@ class EnterResultPresenter extends BaseSignPresenter
 
     protected function createComponentResultEnterControl(): ResultEnterControl
     {
-        return $this->resultEnterControlFactory->create($this->cups->getActive(), null);
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->resultEnterControlFactory->create($this->cups->getActive(), null, $onInsert);
     }
 
     public function actionDefault(): void

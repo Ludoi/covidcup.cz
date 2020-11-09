@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App;
 
 
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\Utils\Json;
 
 class ResultsCalculation
@@ -19,13 +21,15 @@ class ResultsCalculation
     private Results $results;
     private int $cupid;
     private ResultsOverall $resultsOverall;
+    private Cache $cache;
 
-    public function __construct(Cups $cups, Results $results, ResultsOverall $resultsOverall)
+    public function __construct(Cups $cups, Results $results, ResultsOverall $resultsOverall, IStorage $storage)
     {
         $this->cups = $cups;
         $this->results = $results;
         $this->cupid = $this->cups->getActive();
         $this->resultsOverall = $resultsOverall;
+        $this->cache = new Cache($storage);
     }
 
     public function calculate(int $cupid): void
@@ -37,6 +41,7 @@ class ResultsCalculation
         $calculation->setResults($this->results);
         $results = $calculation->calculate();
         $this->resultsOverall->insert(['cupid' => $cupid, 'created' => new \DateTime(), 'content' => Json::encode($results)]);
+        $this->cache->clean(['tags' => ["overallResults_$cupid"]]);
     }
 
 }

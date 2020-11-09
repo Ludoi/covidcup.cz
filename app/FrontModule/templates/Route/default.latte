@@ -28,16 +28,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                            {control planControl, $route->id}
-                            {control resultEnterControl}
-                            </div>
+                            {if $user->isLoggedIn()}
+                                <div class="col-sm-6">
+                                    {control planControl, $route->id}
+                                {control resultEnterControl}
+                                </div>
+                            {/if}
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                            {control resultOrderControl}
+                        {if $user->isLoggedIn()}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    {cache "resultOrder_{$route->id}", tags => ["resultOrder_{$route->id}"]}
+                                        {control resultOrderControl}
+                                    {/cache}
+                                </div>
                             </div>
-                        </div>
+                        {/if}
 
                         <div class="row">
                             <div class="col-sm-6">

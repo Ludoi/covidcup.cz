@@ -12,22 +12,25 @@ namespace App;
 
 
 use DateInterval;
+use DateTime;
 use Nette\Database\Table\Selection;
 
 class Results extends Table
 {
     protected ?string $tableName = 'results';
 
-    public function insertItem(int $cupid, int $raceid, int $racerid, \DateTime $startTime, int $time, bool $guaranteed = false)
+    public function insertItem(int $cupid, int $raceid, int $racerid, DateTime $startTime, int $time,
+                               bool $guaranteed = false, ?int $measurementid = null)
     {
-        $now = new \DateTime();
+        $now = new DateTime();
         $finishTime = clone $startTime;
         $finishTime->add(new DateInterval('PT' . $time . 'S'));
         $this->insert(['cupid' => $cupid, 'raceid' => $raceid, 'racerid' => $racerid, 'created' => $now,
-            'start_time' => $startTime, 'finish_time' => $finishTime, 'time_seconds' => $time, 'active' => true, 'guaranteed' => $guaranteed]);
+            'start_time' => $startTime, 'finish_time' => $finishTime, 'time_seconds' => $time, 'active' => true,
+            'guaranteed' => $guaranteed, 'measurementid' => $measurementid]);
     }
 
-    public function isItemCorrect(int $cupid, int $raceid, int $racerid, \DateTime $startTime, int $time): bool
+    public function isItemCorrect(int $cupid, int $raceid, int $racerid, DateTime $startTime, int $time): bool
     {
         $finishTime = clone $startTime;
         $finishTime->add(new DateInterval('PT' . $time . 'S'));

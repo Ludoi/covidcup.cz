@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace App;
 
-
-interface ResultEnterControlFactory
+interface ResultCupControlFactory
 {
-    public function create(int $cupid, ?int $raceid, array $onInsert): ResultEnterControl;
+    public function create(int $cupid): ResultCupControl;
 }

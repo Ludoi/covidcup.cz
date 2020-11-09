@@ -13,6 +13,8 @@ namespace App;
 use Contributte\FormsBootstrap\BootstrapForm;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\Database\Table\Selection;
 use Nette\Security\User;
 
@@ -28,10 +30,13 @@ class PlanControl extends Control
     private int $page = 1;
     private bool $addItem = false;
     private int $userid;
-    private int $racerid;
+    private ?int $racerid;
     private bool $onlyOwn;
+    private Cache $cache;
+    private array $onInsert = [];
 
-    public function __construct(int $cupid, ?int $raceid, bool $onlyOwn, Plans $plans, Users $users, User $user, Cups $cups)
+    public function __construct(int $cupid, ?int $raceid, bool $onlyOwn, Plans $plans, Users $users, User $user,
+                                Cups $cups, IStorage $storage, array $onInsert)
     {
         $this->cupid = $cupid;
         $this->raceid = $raceid;
@@ -42,6 +47,8 @@ class PlanControl extends Control
         $this->onlyOwn = $onlyOwn;
         $this->userid = (int)$this->user->getId();
         $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
+        $this->cache = new Cache($storage);
+        $this->onInsert = $onInsert;
     }
 
     public function handlePage(int $page)
@@ -53,6 +60,7 @@ class PlanControl extends Control
     public function handleAddItem(): void
     {
         $this->addItem = true;
+        $this->cleanCache();
     }
 
     public function handleDelete(int $id): void
@@ -62,13 +70,22 @@ class PlanControl extends Control
             $userid = $plan->ref('racerid')->userid;
             if ($userid == $this->userid) {
                 $plan->delete();
+                $this->cleanCache((int)$plan->raceid);
             }
         }
+    }
+
+    private function cleanCache(?int $raceid = null): void
+    {
+        $tags[] = 'plan';
+        if (!is_null($raceid)) $tags[] = "plan_$raceid";
+        $this->cache->clean([Cache::TAGS => $tags]);
     }
 
     public function handleCancel(): void
     {
         $this->addItem = false;
+        $this->cleanCache();
     }
 
     public function createComponentAddItem(): Form
@@ -128,7 +145,9 @@ class PlanControl extends Control
                     $this->addItem = false;
                     $this->plans->insertItem($this->cupid, (int)$values->raceid, $this->racerid,
                         $values->comment, $values->plan_date);
+                    $this->cleanCache((int)$values->raceid);
                     $this->flashMessage('Plán uložen.');
+                    $this->onInsert;
                 }
             }
         }

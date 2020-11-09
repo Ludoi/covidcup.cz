@@ -14,6 +14,8 @@ namespace App;
 use Bunny\Message;
 use Contributte\RabbitMQ\Consumer\IConsumer;
 use DateTime;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use ZipArchive;
 
 final class GPXConsumer implements IConsumer
@@ -22,13 +24,16 @@ final class GPXConsumer implements IConsumer
     private Cups $cups;
     private Results $results;
     private Messages $messages;
+    private Cache $cache;
 
-    public function __construct(Measurements $measurements, Cups $cups, Results $results, Messages $messages)
+    public function __construct(Measurements $measurements, Cups $cups, Results $results, Messages $messages,
+                                IStorage $storage)
     {
         $this->measurements = $measurements;
         $this->cups = $cups;
         $this->results = $results;
         $this->messages = $messages;
+        $this->cache = new Cache($storage);
     }
 
     public function consume(Message $message): int
@@ -137,12 +142,17 @@ final class GPXConsumer implements IConsumer
             $startTime, $startPoint['latitude'], $startPoint['longitude'], $startDistance, $finishTime,
             $finishPoint['latitude'], $finishPoint['longitude'], $finishDistance, $zipFilename, $fileHash);
         if (!is_null($measurement)) {
-            $this->results->insert(['cupid' => $cupid, 'raceid' => $measurement->raceid,
-                'racerid' => (int)$messageData->racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
-                'created' => $now, 'active' => true, 'guaranteed' => $guaranteed, 'measurementid' => $measurement->id]);
+            $this->results->insertItem($cupid, (int)$measurement->raceid, $racerid, $measurement->start_time, $duration,
+                $guaranteed, (int)$measurement->id);
+            $this->cleanCache((int)$measurement->raceid);
         }
 
         return IConsumer::MESSAGE_ACK; // Or ::MESSAGE_NACK || ::MESSAGE_REJECT
+    }
+
+    private function cleanCache(int $raceid): void
+    {
+        $this->cache->clean([Cache::TAGS => ['resultEnter', "resultEnter_$raceid", "resultOrder_$raceid"]]);
     }
 
 }
