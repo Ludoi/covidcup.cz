@@ -29,7 +29,14 @@ class StartPresenter extends BaseSignPresenter
 
     protected function createComponentStartControl(): StartControl
     {
-        return $this->startControlFactory->create();
+        $onStart = function () {
+            $this->redirect('this');
+        };
+        $onStop = function ($message) {
+            $this->flashMessage($message, 'success');
+            $this->redirect('Homepage:default');
+        };
+        return $this->startControlFactory->create($onStart, $onStop);
     }
 
     public function actionDefault(): void

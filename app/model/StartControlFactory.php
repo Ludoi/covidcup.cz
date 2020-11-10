@@ -13,5 +13,5 @@ namespace App;
 
 interface StartControlFactory
 {
-    public function create(): StartControl;
+    public function create(callable $onStart, callable $onStop): StartControl;
 }

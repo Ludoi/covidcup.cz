@@ -25,13 +25,18 @@ class StartControl extends Control
     private bool $firstPage = true;
     private bool $beforeStart;
     private Results $results;
+    private $onStart;
+    private $onStop;
 
-    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results)
+    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results, callable $onStart,
+                                callable $onStop)
     {
         $this->measurements = $measurements;
         $this->cups = $cups;
         $this->user = $user;
         $this->results = $results;
+        $this->onStart = $onStart;
+        $this->onStop = $onStop;
     }
 
     public function handleCancel(): void
@@ -103,6 +108,7 @@ class StartControl extends Control
             $this->flashMessage('Odstartováno!', 'success');
         }
         $this->firstPage = true;
+        call_user_func($this->onStart);
         $this->redrawControl();
     }
 
@@ -142,8 +148,11 @@ class StartControl extends Control
                 }
             }
             $this->flashMessage('Ukončeno!', 'success');
+            $timeStr = (ResultUtil::secondsTime($duration))->format('%h:%I:%S');
+            $this->flashMessage("Dosažený čas je $timeStr.", 'success');
         }
         $this->firstPage = true;
+        call_user_func($this->onStop, "Dosažený čas je $timeStr.");
         $this->redrawControl();
     }
 
