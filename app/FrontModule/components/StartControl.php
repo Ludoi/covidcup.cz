@@ -14,6 +14,8 @@ namespace App;
 use Contributte\FormsBootstrap\BootstrapForm;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\Security\User;
 
 class StartControl extends Control
@@ -25,10 +27,11 @@ class StartControl extends Control
     private bool $firstPage = true;
     private bool $beforeStart;
     private Results $results;
+    private Cache $cache;
     private $onStart;
     private $onStop;
 
-    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results, callable $onStart,
+    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results, IStorage $storage, callable $onStart,
                                 callable $onStop)
     {
         $this->measurements = $measurements;
@@ -37,6 +40,12 @@ class StartControl extends Control
         $this->results = $results;
         $this->onStart = $onStart;
         $this->onStop = $onStop;
+        $this->cache = new Cache($storage);
+    }
+
+    private function cleanCache(int $raceid): void
+    {
+        $this->cache->clean([Cache::TAGS => ['resultEnter', "resultEnter_$raceid", "resultOrder_$raceid"]]);
     }
 
     public function handleCancel(): void
@@ -145,6 +154,7 @@ class StartControl extends Control
                     $this->results->insert(['cupid' => $this->cups->getActive(), 'raceid' => $measurement->raceid,
                         'racerid' => $racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
                         'created' => $now, 'active' => true, 'guaranteed' => true, 'measurementid' => $measurementid]);
+                    $this->cleanCache((int)$measurement->raceid);
                 }
             }
             $this->flashMessage('Ukončeno!', 'success');
