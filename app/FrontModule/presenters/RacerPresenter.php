@@ -15,6 +15,8 @@ use App\Cups;
 use App\CupsRacers;
 use App\PlanControl;
 use App\PlanControlFactory;
+use App\ResultEnterControl;
+use App\ResultEnterControlFactory;
 use App\Users;
 
 class RacerPresenter extends BaseSignPresenter
@@ -25,8 +27,10 @@ class RacerPresenter extends BaseSignPresenter
     private Cups $cups;
     private int $cupid;
     private CupsRacers $cupsRacers;
+    private ResultEnterControlFactory $resultEnterControlFactory;
 
-    public function __construct(Users $users, PlanControlFactory $planControlFactory, Cups $cups,
+    public function __construct(Users $users, PlanControlFactory $planControlFactory,
+                                ResultEnterControlFactory $resultEnterControlFactory, Cups $cups,
                                 CupsRacers $cupsRacers)
     {
         $this->users = $users;
@@ -34,21 +38,32 @@ class RacerPresenter extends BaseSignPresenter
         $this->cups = $cups;
         $this->cupid = $cups->getActive();
         $this->cupsRacers = $cupsRacers;
+        $this->resultEnterControlFactory = $resultEnterControlFactory;
     }
 
     protected function createComponentPlanControl(): PlanControl
     {
-        return $this->planControlFactory->create($this->cupid, null, false);
+        return $this->planControlFactory->create($this->cupid, null, true);
     }
 
-
+    protected function createComponentResultEnterControl(): ResultEnterControl
+    {
+        $onInsert[] = function () {
+            $this->redirect('this');
+        };
+        return $this->resultEnterControlFactory->create($this->cupid, null, $onInsert);
+    }
 
     public function actionDefault(?int $id): void
     {
-        if (is_null($id))
-        {
+        if (is_null($id)) {
             $user = $this->users->find((int)$this->user->getId());
             $this->userid = (int)$user->id;
+            $cupsRacer = $this->cupsRacers->findOneBy(['cups' => $this->cups->getActive(), 'userid' => $this->userid]);
+            if (is_null($cupsRacer)) {
+                $this->flashMessage('Závodník nenalezen.');
+                $this->redirect('Homepage:');
+            }
         } else {
             $cupsRacer = $this->cupsRacers->find($id);
             if (is_null($cupsRacer)) {
@@ -63,5 +78,6 @@ class RacerPresenter extends BaseSignPresenter
             $this->redirect('Homepage:');
         }
         $this->template->userInfo = $user;
+        $this->template->racerid = (int)$cupsRacer->id;
     }
 }

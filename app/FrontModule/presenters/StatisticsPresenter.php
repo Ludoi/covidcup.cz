@@ -40,5 +40,9 @@ class StatisticsPresenter extends BasePresenter
         $this->template->femaleCount = $this->users->findBy(['active' => true, 'gender' => 'f'])->count();
         $this->template->routesCount = $this->routes->findAll()->count();
         $this->template->resultsCount = $this->results->findAll()->count();
+        $year = (int)(new \DateTime())->format('Y');
+        $this->template->averageAge = $year - $this->users->findAll()->aggregation('AVG(year)');
+        $racersCount = $this->results->findBy(['cupid' => $this->cups->getActive()])->group('racerid')->count();
+        $this->template->averageRaces = ($racersCount > 0) ? $this->template->resultsCount / $racersCount : 0;
     }
 }

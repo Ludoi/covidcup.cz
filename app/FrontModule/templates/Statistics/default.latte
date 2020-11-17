@@ -46,9 +46,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-6 mb-3">
+                        <div class="card text-center bg-dark">
+                            <h5 class="card-title">Průměrný věk</h5>
+                            <div class="card-body">
+                                <h2 class="display-2">{$averageAge|number: 1}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <div class="card text-center bg-light">
+                            <h5 class="card-title">Průměrný počet startů</h5>
+                            <div class="card-body">
+                                <h2 class="display-2">{$averageRaces|number: 1}</h2>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 {/block}
 
 {block description}

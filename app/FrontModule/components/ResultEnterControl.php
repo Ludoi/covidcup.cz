@@ -184,9 +184,9 @@ class ResultEnterControl extends Control
         $this->redrawControl();
     }
 
-    public function render(): void
+    public function render(?int $racerid = null): void
     {
-        $items = $this->results->getItems($this->cupid, true, $this->raceid, null);
+        $items = $this->results->getItems($this->cupid, true, $this->raceid, $racerid);
         $this->getPage($items);
         $this->template->addItem = $this->addItem;
         $this->template->addItemGPX = $this->addItemGPX;
