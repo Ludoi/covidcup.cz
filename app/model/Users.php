@@ -83,4 +83,19 @@ class Users extends Table
         return [$password, $initial];
     }
 
+    public function updateActivation(string $email): array
+    {
+        $user = $this->getUser($email);
+        $password = '';
+        $initial = '';
+        if (!is_null($user) && !$user->active) {
+            $password = Random::generate(20);
+            $initial = Random::generate(100);
+            $pwd = new Passwords();
+            $hash = $pwd->hash($password);
+            $user->update(['initial' => $initial, 'hash' => $hash]);
+        }
+        return [$password, $initial];
+    }
+
 }

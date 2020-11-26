@@ -150,4 +150,51 @@ class RegistrationPresenter extends BasePresenter
         $this->flashMessage('Registrace byla uložena a byl odeslán aktivační email.', 'success');
         $this->redirect('Homepage:default');
     }
+
+    protected function createComponentNewActivation()
+    {
+        $form = new BootstrapForm();
+        $form->addText('email', 'Email:', 50, 250)->addRule(Form::EMAIL)->setRequired();
+
+        $form->addSubmit('send', 'Poslat znovu aktivační email');
+
+        $form->onSuccess[] = [$this, 'saveNewActivation'];
+        return $form;
+    }
+
+    public function saveNewActivation(Form $form)
+    {
+        if ($form->isValid()) {
+            $entry = $form->getValues();
+
+            $email = Strings::lower((string)$entry->email);
+            $user = $this->users->findOneBy(['email' => $email]);
+            if (!is_null($user)) {
+                if ($user->active) {
+                    $this->flashMessage('Účet už je aktivovaný, můžeš se přihlásit.', 'info');
+                    $this->redirect('Sign:');
+                }
+                list($password, $initial) = $this->users->updateActivation($email);
+                if ($initial != '') {
+                    $emailTemplate = new Engine();
+                    $params = ['password' => $password, 'activationLink' => $this->presenter->link('//Registration:confirmation', $initial)];
+
+                    $email = array(
+                        'subject' => null,
+                        'content' => $emailTemplate->renderToString(APP_DIR . '/emails/registration-activation.latte', $params),
+                        'to' => $email,
+                        'cc' => '',
+                        'bcc' => ''
+                    );
+                    $this->emailQueue->publish($email);
+                    $this->flashMessage('Aktivační email znovu poslán', 'info');
+                    $this->redirect('Homepage:');
+                }
+            } else {
+                $this->flashMessage('Email ještě nebyl použit. Ale klidně se registruj :-)', 'warning');
+                $this->redirect('Registration:default');
+            }
+        }
+    }
+
 }

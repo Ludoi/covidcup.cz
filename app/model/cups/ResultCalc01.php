@@ -70,11 +70,13 @@ class ResultCalc01 implements iResultCalc
             ResultUtil::sort($racer['races'], ['points' => SORT_DESC]);
             $uniqueRoute = [];
             $points = 0;
+            $pointsAll = 0;
             $counter = 0;
             foreach ($racer['races'] as &$race) {
                 $counter++;
                 $uniqueRoute[$race['raceid']] = 1;
                 if ($counter <= 8) $points += $race['points'];
+                $pointsAll += $race['points'];
             }
             $racer['races_unique'] = sizeof($uniqueRoute);
             $racer['points'] = $points;

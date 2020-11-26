@@ -60,6 +60,6 @@ class Results extends Table
         if (!is_null($active)) {
             $filter[] = ['active' => $active];
         }
-        return $this->findBy($filter)->group('racerid')->order('time_seconds ASC');
+        return $this->findBy($filter)->order('time_seconds ASC');
     }
 }
