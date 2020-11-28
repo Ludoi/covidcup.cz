@@ -32,7 +32,7 @@ class WeatherAssign
     {
         $routes = $this->routes->findBy(['point_to' => 10]);
         $races = $this->races->findBy(['cupid' => $this->cups->getActive(), 'routeid' => $routes]);
-        $results = $this->results->findBy(['routeid' => $races, 'weatherid' => null]);
+        $results = $this->results->findBy(['raceid' => $races, 'weatherid' => null]);
         $oneHour = new \DateInterval('PT1H');
         foreach ($results as $result) {
             $measureTimeMax = clone $result->start_time;

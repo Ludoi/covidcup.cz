@@ -14,6 +14,7 @@
                             <th scope="col">Ztráta</th>
                             <th scope="col">Rychlost (km/h)</th>
                             <th scope="col">Stoupavost (m/h)</th>
+                            <th scope="col">Kdy</th>
                             <th scope="col">Počasí</th>
                             <th scope="col"></th>
                         </tr>
@@ -29,6 +30,7 @@
                             <td></td>
                             <td class="text-right">{App\ResultUtil::speedSec($item->time_seconds, $route->length)|number: 2}</td>
                             <td class="text-right">{App\ResultUtil::climbSec($item->time_seconds, $route->height)|number: 0}</td>
+                            <td>{$item->start_time|date: 'j.n., h:i'}</td>
                             <td>{if !is_null($item->ref('weatherid'))}T = {$item->ref('weatherid')?->temperature}&#8451;,
                                     V = {$item->ref('weatherid')?->wind} km/h,
                                     S = {$item->ref('weatherid')?->snow} cm{/if}</td>
