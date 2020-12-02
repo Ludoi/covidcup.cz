@@ -81,8 +81,13 @@ class ResultEnterControl extends Control
         if (!is_null($result)) {
             $userid = $result->ref('racerid')->userid;
             if ($userid == $this->userid) {
-                $result->delete();
-                $this->cleanCache((int)$result->raceid);
+                $raceid = (int)$result->raceid;
+                if (!is_null($result->measurementid)) {
+                    $result->ref('measurement')->delete();
+                } else {
+                    $result->delete();
+                }
+                $this->cleanCache($raceid);
             }
         }
     }

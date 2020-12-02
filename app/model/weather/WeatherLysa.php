@@ -46,8 +46,8 @@ class WeatherLysa implements iWeather
             if ($div->getAttribute('id') == 'pocasi') {
                 foreach ($div->getElementsByTagName('p') as $p) {
                     if (Strings::contains($p->nodeValue, 'celková sněhová pokrývka')) {
-                        list($snow) = Strings::match($p->nodeValue, '/: ([0-9]+)\w/');
-                        $snow = (float) str_replace(':', '', $snow);
+                        list($snow) = Strings::match($p->nodeValue, '/: ([0-9]+)\D/');
+                        $snow = (float)str_replace(':', '', $snow);
                     }
                 }
             }
