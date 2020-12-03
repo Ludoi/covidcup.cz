@@ -33,9 +33,9 @@
                             <td class="text-right">{App\ResultUtil::speedSec($item->time_seconds, $route->length)|number: 2}</td>
                             <td class="text-right">{App\ResultUtil::climbSec($item->time_seconds, $route->height)|number: 0}</td>
                             <td>{$item->start_time|date: 'j.n., h:i'}</td>
-                            <td>{$item->ref('weatherid')?->temperature}</td>
-                            <td>{$item->ref('weatherid')?->snow}</td>
-                            <td>{$item->ref('weatherid')?->wind}</td>
+                            <td class="text-right">{$item->ref('weatherid')?->temperature}</td>
+                            <td class="text-right">{$item->ref('weatherid')?->snow}</td>
+                            <td class="text-right">{$item->ref('weatherid')?->wind}</td>
                             <td>{if $item->guaranteed}
                                     <svg width="1em" height="1em" viewBox="0 0 16 16"
                                          class="bi bi-shield-lock-fill text-success" fill="currentColor"

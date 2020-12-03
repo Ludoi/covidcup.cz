@@ -45,7 +45,7 @@
                                             <tbody>
                                             <tr n:foreach="$times as $time">
                                                 <td>{$time['catid']}</td>
-                                                <td>{$time['times']['count']}</td>
+                                                <td class="text-right">{$time['times']['count']}</td>
                                                 <td>{App\ResultUtil::secondsTime($time['times']['bestTime'])|date: '%h:%I:%S'}</td>
                                                 <td>{App\ResultUtil::secondsTime($time['times']['worstTime'])|date: '%h:%I:%S'}</td>
                                                 <td>{App\ResultUtil::secondsTime($time['times']['averageTime'])|date: '%h:%I:%S'}</td>
