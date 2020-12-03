@@ -15,6 +15,16 @@
                                             <dt>Pohlaví:</dt>
                                             <dd>{$userInfo->gender == 'm' ? 'muž' : 'žena'}</dd>
                                         </dl>
+                                        {if $myracerid <> $racerid}
+                                            <p class="card-text">
+                                                {if $isFollowing}
+                                                    <a n:href="Unfollow! $racerid" class="btn btn-danger">Už
+                                                        nesledovat</a>
+                                                {else}
+                                                    <a n:href="Follow! $racerid" class="btn btn-primary">Sledovat</a>
+                                                {/if}
+                                            </p>
+                                        {/if}
                                     </div>
                                 </div>
                             </div>

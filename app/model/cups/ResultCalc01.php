@@ -52,7 +52,7 @@ class ResultCalc01 implements iResultCalc
             }
             $racers[$result->racerid]['result_count']++;
             $racers[$result->racerid]['races'][] = ['raceid' => $result->raceid,
-                'time_seconds' => $result->time_seconds, 'points' => 0];
+                'time_seconds' => $result->time_seconds, 'points' => 0, 'resultid' => $result->id];
         }
 
         foreach ($racers as &$racer) {

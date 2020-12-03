@@ -62,4 +62,46 @@ class Results extends Table
         }
         return $this->findBy($filter)->order('time_seconds ASC');
     }
+
+    public function getStatistics(int $raceid, int $catid): array
+    {
+
+        $results = $this->findBy(['raceid' => $raceid]);
+        $count = 0;
+        $times = [];
+        foreach ($results as $result) {
+            $categories = $result->ref('racerid')->related('racers_categories')->fetchAll();
+            $racerCatid = null;
+            foreach ($categories as $category) {
+                $racerCatid = (int)$category->catid;
+            }
+            if ($racerCatid == $catid) {
+                $times[] = $result->time_seconds;
+            }
+        }
+        sort($times);
+        $count = count($times);
+        $bestTime = 0;
+        $worstTime = 0;
+        $averageTime = 0;
+        $median = 0;
+        if (count($times) > 0) {
+            $bestTime = $times[0];
+            $worstTime = $times[$count - 1];
+            $averageTime = 0;
+            foreach ($times as $time) {
+                $averageTime += $time / $count;
+            }
+            if ($count % 2 == 0) {
+                $index = $count / 2;
+                $median = ($times[$index - 1] + $times[$index]) / 2;
+            } else {
+                $index = ($count - 1) / 2;
+                $median = $times[$index];
+            }
+            $averageTime = round($averageTime);
+        }
+        return ['count' => $count, 'bestTime' => $bestTime, 'worstTime' => $worstTime, 'averageTime' => $averageTime, 'medianTime' => $median];
+
+    }
 }

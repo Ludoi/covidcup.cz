@@ -13,6 +13,7 @@ namespace FrontModule;
 
 use App\Cups;
 use App\CupsRacers;
+use App\Followers;
 use App\PlanControl;
 use App\PlanControlFactory;
 use App\ResultEnterControl;
@@ -28,17 +29,28 @@ class RacerPresenter extends BaseSignPresenter
     private int $cupid;
     private CupsRacers $cupsRacers;
     private ResultEnterControlFactory $resultEnterControlFactory;
+    private ?int $racerid;
+    private Followers $followers;
 
     public function __construct(Users $users, PlanControlFactory $planControlFactory,
                                 ResultEnterControlFactory $resultEnterControlFactory, Cups $cups,
-                                CupsRacers $cupsRacers)
+                                CupsRacers $cupsRacers, Followers $followers)
     {
+        parent::__construct();
         $this->users = $users;
         $this->planControlFactory = $planControlFactory;
         $this->cups = $cups;
         $this->cupid = $cups->getActive();
         $this->cupsRacers = $cupsRacers;
         $this->resultEnterControlFactory = $resultEnterControlFactory;
+        $this->followers = $followers;
+    }
+
+    public function startup()
+    {
+        parent::startup();
+        $this->userid = (int)$this->user->getId();
+        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
     }
 
     protected function createComponentPlanControl(): PlanControl
@@ -54,11 +66,21 @@ class RacerPresenter extends BaseSignPresenter
         return $this->resultEnterControlFactory->create($this->cupid, null, $onInsert);
     }
 
+    public function handleFollow(int $racerFollow): void
+    {
+        $this->followers->insertItem($this->racerid, $racerFollow);
+        $this->redirect('this');
+    }
+
+    public function handleUnfollow(int $racerFollow): void
+    {
+        $this->followers->removeFollower($this->racerid, $racerFollow);
+        $this->redirect('this');
+    }
+
     public function actionDefault(?int $id): void
     {
         if (is_null($id)) {
-            $user = $this->users->find((int)$this->user->getId());
-            $this->userid = (int)$user->id;
             $cupsRacer = $this->cupsRacers->findOneBy(['cups' => $this->cups->getActive(), 'userid' => $this->userid]);
             if (is_null($cupsRacer)) {
                 $this->flashMessage('Závodník nenalezen.');
@@ -79,5 +101,7 @@ class RacerPresenter extends BaseSignPresenter
         }
         $this->template->userInfo = $user;
         $this->template->racerid = (int)$cupsRacer->id;
+        $this->template->myracerid = $this->racerid;
+        $this->template->isFollowing = $this->followers->isFollowing($this->racerid, $this->template->racerid);
     }
 }

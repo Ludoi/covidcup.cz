@@ -19,6 +19,7 @@ use App\ResultEnterControl;
 use App\ResultEnterControlFactory;
 use App\ResultOrderControl;
 use App\ResultOrderControlFactory;
+use App\Results;
 use App\Routes;
 
 class RoutePresenter extends BasePresenter
@@ -31,11 +32,12 @@ class RoutePresenter extends BasePresenter
     private ResultOrderControlFactory $resultOrderControlFactory;
     private int $cupid;
     private int $routeid;
+    private Results $results;
 
     public function __construct(Routes $routes, Points $points, PlanControlFactory $planControlFactory,
                                 ResultEnterControlFactory $resultEnterControlFactory,
                                 ResultOrderControlFactory $resultOrderControlFactory,
-                                Cups $cups)
+                                Cups $cups, Results $results)
     {
         $this->routes = $routes;
         $this->points = $points;
@@ -44,6 +46,7 @@ class RoutePresenter extends BasePresenter
         $this->resultEnterControlFactory = $resultEnterControlFactory;
         $this->resultOrderControlFactory = $resultOrderControlFactory;
         $this->cupid = $cups->getActive();
+        $this->results = $results;
     }
 
     protected function createComponentPlanControl(): PlanControl
@@ -68,7 +71,8 @@ class RoutePresenter extends BasePresenter
     }
 
 
-    public function actionDefault(int $id) {
+    public function actionDefault(int $id)
+    {
         $this->routeid = $id;
         $route = $this->routes->find($id);
         if (is_null($route)) {
@@ -77,5 +81,10 @@ class RoutePresenter extends BasePresenter
         }
         $this->template->routes = $this->cups->find($this->cupid)->related('cups_routes');
         $this->template->route = $route;
+        $categories = $this->cups->find($this->cups->getActive())->related('categories');
+        $this->template->times = [];
+        foreach ($categories as $category) {
+            $this->template->times[] = ['catid' => $category->catid, 'times' => $this->results->getStatistics($id, (int)$category->id)];
+        }
     }
 }
