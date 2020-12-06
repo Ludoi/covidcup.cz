@@ -74,6 +74,7 @@ services:
 	- App\RacersCategories
 	- App\Console\ResultsCategoriesCommand
 	- App\Followers
+	- App\ResultsRacers
 
 rabbitmq:
 	connections:

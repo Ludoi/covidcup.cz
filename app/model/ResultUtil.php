@@ -67,17 +67,18 @@ class ResultUtil
         }
     }
 
-    static public function countPos(array &$table, string $valueField, string $orderField)
+    static public function countPos(array &$table, array $valueField, string $orderField)
     {
-        ResultUtil::sort($table, array($valueField => SORT_DESC));
+        ResultUtil::sort($table, $valueField);
         $pos = 0;
         $value = 0;
         $counter = 0;
+        $fieldName = key($valueField);
         foreach ($table as &$row) {
             $counter++;
-            if ($row[$valueField] <> $value) {
+            if ($row[$fieldName] <> $value) {
                 $pos = $counter;
-                $value = $row[$valueField];
+                $value = $row[$fieldName];
             }
             $row[$orderField] = $pos;
         }

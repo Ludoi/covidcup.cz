@@ -18,4 +18,6 @@ interface iResultCalc
     public function calculate(): array;
 
     public function setCups(int $cupid, Cups $cups): void;
+
+    public function getRaceResults(int $raceid): array;
 }
