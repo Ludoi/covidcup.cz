@@ -48,15 +48,17 @@ class ComparisonPresenter extends BaseSignPresenter
             foreach ($followersList as $following) {
                 $followingList[(int)$following->follow_racerid] = (int)$following->follow_racerid;
             }
-            $followingResults = $this->resultsRacers->findAll()->where('categoryid IS NULL AND resultid.racerid IN ?', $followingList)->fetchAll();
+            if (sizeof($followingList) > 0) {
+                $followingResults = $this->resultsRacers->findAll()->where('categoryid IS NULL AND resultid.racerid IN ?', $followingList)->fetchAll();
+                $followersResults = [];
+                foreach ($followingResults as $followerResult) {
+                    $races[$followerResult->ref('resultid')->raceid] = $followerResult->ref('resultid')->raceid;
+                    $followersResults[$followerResult->ref('resultid')->racerid][$followerResult->ref('resultid')->raceid][] = $followerResult;
+                }
+            }
         }
         $myResults = $this->resultsRacers->findAll()->where('categoryid IS NULL AND resultid.racerid = ?', $this->racerid);
         $races = [];
-        $followersResults = [];
-        foreach ($followingResults as $followerResult) {
-            $races[$followerResult->ref('resultid')->raceid] = $followerResult->ref('resultid')->raceid;
-            $followersResults[$followerResult->ref('resultid')->racerid][$followerResult->ref('resultid')->raceid][] = $followerResult;
-        }
         foreach ($myResults as $myResult) {
             $races[$myResult->ref('resultid')->raceid] = $myResult->ref('resultid')->raceid;
             $followersResults[$this->racerid][$myResult->ref('resultid')->raceid][] = $myResult;
