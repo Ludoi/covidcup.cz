@@ -19,9 +19,11 @@
                                             <p class="card-text">
                                                 {if $isFollowing}
                                                     <a n:href="Unfollow! $racerid" class="btn btn-danger">Už
-                                                        nesledovat</a>
+                                                        nesrovnávat</a> <a n:href="Comparison:default"
+                                                        class="btn btn-primary">Srovnání</a>
                                                 {else}
-                                                    <a n:href="Follow! $racerid" class="btn btn-primary">Sledovat</a>
+                                                    <a n:href="Follow! $racerid" class="btn btn-primary">Přidat do
+                                                        srovnání</a>
                                                 {/if}
                                             </p>
                                         {/if}

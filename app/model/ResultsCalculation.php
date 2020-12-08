@@ -67,7 +67,7 @@ class ResultsCalculation
                     }
                 }
             }
-
+            $this->cache->clean(['tags' => ["resultOrder_{$cupRoute->id}"]]);
         }
         $this->cache->clean(['tags' => ["overallResults_$cupid"]]);
     }
