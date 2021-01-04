@@ -48,7 +48,13 @@ class ResultCupControl extends Control
     public function render()
     {
         if (is_null($this->sliceid)) {
-            $this->sliceid = (int)$this->resultsOverall->getLastSlice($this->cupid)->id;
+            $slice = $this->resultsOverall->getLastSlice($this->cupid);
+            if (!is_null($slice)) {
+                $this->sliceid = (int)$slice->id;
+            } else {
+                $this->flashMessage('Zatím bez výsledků', 'info');
+                return;
+            }
         }
         if (is_null($this->catid)) {
             $this->catid = 0;
@@ -58,14 +64,14 @@ class ResultCupControl extends Control
             "overallResults_{$this->cupid}_{$this->sliceid}_{$this->catid}"];
         $cacheItem = $this->cache->load($this->template->cacheid);
         if (is_null($cacheItem)) {
-            $result = new ResultCup01($this->cups, $this->resultsOverall, $this->cupsRacers, $this->categories,
+            $result = new ResultCup02($this->cups, $this->resultsOverall, $this->cupsRacers, $this->categories,
                 $this->cupsRoutes, $this->cupid);
             $this->template->catidSelected = $this->catid;
             $this->template->sliceidSelected = $this->sliceid;
             $result->prepareResults($this->template, $this->sliceid, $this->catid);
         }
 
-        $this->template->resultCupInclude = __DIR__ . '/cups/resultCup01.latte';
+        $this->template->resultCupInclude = __DIR__ . '/cups/resultCup02.latte';
         $this->template->render(__DIR__ . '/resultCup.latte');
     }
 }

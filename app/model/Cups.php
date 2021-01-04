@@ -17,7 +17,7 @@ class Cups extends Table
 
     public function getActive(): int
     {
-        return 1;
+        return 2;
     }
 
     public function getRacerid(int $cupid, int $userid): ?int

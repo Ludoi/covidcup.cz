@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App;
 
 
-class ResultCalc01 implements iResultCalc
+class ResultCalc02 implements iResultCalc
 {
     private Results $results;
     private Cups $cups;
@@ -20,7 +20,7 @@ class ResultCalc01 implements iResultCalc
     private array $races;
     const FACTOR = 2.5;
     const MAX_POINTS = 50;
-    const COUNTABLE = 9;
+    const COUNTABLE = 8;
 
     public function setResults(Results $results): void
     {

@@ -59,6 +59,7 @@ class ComparisonPresenter extends BaseSignPresenter
         }
         $myResults = $this->resultsRacers->findAll()->where('categoryid IS NULL AND resultid.racerid = ?', $this->racerid);
         $races = [];
+        $followersResults = [];
         foreach ($myResults as $myResult) {
             $races[$myResult->ref('resultid')->raceid] = $myResult->ref('resultid')->raceid;
             $followersResults[$this->racerid][$myResult->ref('resultid')->raceid][] = $myResult;
