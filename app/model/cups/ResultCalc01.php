@@ -20,7 +20,7 @@ class ResultCalc01 implements iResultCalc
     private array $races;
     const FACTOR = 2.5;
     const MAX_POINTS = 50;
-    const COUNTABLE = 9;
+    const COUNTABLE = 8;
 
     public function setResults(Results $results): void
     {

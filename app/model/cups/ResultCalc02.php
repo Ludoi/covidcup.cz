@@ -20,7 +20,7 @@ class ResultCalc02 implements iResultCalc
     private array $races;
     const FACTOR = 2.5;
     const MAX_POINTS = 50;
-    const COUNTABLE = 8;
+    const COUNTABLE = 9;
 
     public function setResults(Results $results): void
     {
@@ -101,8 +101,10 @@ class ResultCalc02 implements iResultCalc
         $results = $this->results->findBy(['raceid' => $raceid]);
         // get best times and number of races per racers
         $racers = [];
+        $race = ['racerid' => null, 'bestTime' => null,
+            'raceid' => null, 'overall_results' => [], 'category_results' => [], 'count' => 0];
         foreach ($results as $result) {
-            if (!isset($race)) {
+            if (is_null($race['racerid'])) {
                 $race = ['racerid' => (int)$result->racerid, 'bestTime' => (int)$result->time_seconds,
                     'raceid' => (int)$result->raceid, 'overall_results' => [], 'category_results' => [], 'count' => 0];
             } elseif ($race['bestTime'] > $result->time_seconds) {
