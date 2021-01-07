@@ -84,9 +84,9 @@ class RoutePresenter extends BasePresenter
         $this->template->route = $route;
         $categories = $this->cups->find($this->cups->getActive())->related('categories');
         $this->template->times = [];
-        foreach ($categories as $category) {
-            $this->template->times[] = ['catid' => $category->catid, 'times' => $this->results->getStatistics($id, (int)$category->id)];
-        }
         $this->raceid = $this->cups->getRaceid($this->cupid, $this->routeid);
+        foreach ($categories as $category) {
+            $this->template->times[] = ['catid' => $category->catid, 'times' => $this->results->getStatistics($this->raceid, (int)$category->id)];
+        }
     }
 }
