@@ -1,6 +1,6 @@
 <p class="card-text small">Legenda:
     <span n:foreach="$races as $id=>$race"><em>({$race['legend_name']})</em> <a
-                href="{plink Route:default, $id}">{$race['description']}</a></span>
+                href="{plink Route:default, $race['routeid']}">{$race['description']}</a></span>
 </p>
 <table class="table-responsive table-striped table-sm">
     <thead>

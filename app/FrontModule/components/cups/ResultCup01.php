@@ -79,6 +79,7 @@ class ResultCup01
         foreach ($this->cupsRoutes->findBy(['id' => $racesList]) as $race) {
             $template->races[$race->id]['legend_name'] = $race->legend_name;
             $template->races[$race->id]['description'] = $race->ref('routeid')->description;
+            $template->races[$race->id]['routeid'] = $race->routeid;
         }
     }
 

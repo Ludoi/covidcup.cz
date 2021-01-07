@@ -32,6 +32,7 @@ class RoutePresenter extends BasePresenter
     private ResultOrderControlFactory $resultOrderControlFactory;
     private int $cupid;
     private int $routeid;
+    private int $raceid;
     private Results $results;
 
     public function __construct(Routes $routes, Points $points, PlanControlFactory $planControlFactory,
@@ -54,7 +55,7 @@ class RoutePresenter extends BasePresenter
         $onInsert[] = function () {
             $this->redirect('this');
         };
-        return $this->planControlFactory->create($this->cupid, $this->routeid, false, $onInsert);
+        return $this->planControlFactory->create($this->cupid, $this->raceid, false, $onInsert);
     }
 
     protected function createComponentResultEnterControl(): ResultEnterControl
@@ -62,12 +63,12 @@ class RoutePresenter extends BasePresenter
         $onInsert[] = function () {
             $this->redirect('this');
         };
-        return $this->resultEnterControlFactory->create($this->cupid, $this->routeid, $onInsert);
+        return $this->resultEnterControlFactory->create($this->cupid, $this->raceid, $onInsert);
     }
 
     protected function createComponentResultOrderControl(): ResultOrderControl
     {
-        return $this->resultOrderControlFactory->create($this->cupid, $this->routeid);
+        return $this->resultOrderControlFactory->create($this->cupid, $this->raceid);
     }
 
 
@@ -86,5 +87,6 @@ class RoutePresenter extends BasePresenter
         foreach ($categories as $category) {
             $this->template->times[] = ['catid' => $category->catid, 'times' => $this->results->getStatistics($id, (int)$category->id)];
         }
+        $this->raceid = $this->cups->getRaceid($this->cupid, $this->routeid);
     }
 }

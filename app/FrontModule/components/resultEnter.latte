@@ -41,7 +41,7 @@
                                         <td>{$item->start_time|date:'j.n.Y, H:i:s'}</td>
                                         {if is_null($raceid)}
                                             <td>
-                                                <a href="{$presenter->link('Route:default', $item->raceid)}">{$item->ref('raceid')->ref('routeid')->description}</a>
+                                                <a href="{$presenter->link('Route:default', $item->ref('raceid')->routeid)}">{$item->ref('raceid')->ref('routeid')->description}</a>
                                             </td>
                                         {/if}
                                         <td>
