@@ -13,5 +13,5 @@ namespace App;
 
 interface StartControlFactory
 {
-    public function create(callable $onStart, callable $onStop): StartControl;
+    public function create(int $cupid, callable $onStart, callable $onStop): StartControl;
 }

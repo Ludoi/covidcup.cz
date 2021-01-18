@@ -1,0 +1,8 @@
+<div class="card bg-transparent">
+    <div class="card-body">
+        <ul class="nav nav-pills">
+            <li n:foreach="$cups as $cup" class="nav-item">
+                <a n:href="Select!, $cup->id" n:class="$cup->id == $selectedCup ? active,nav-link">{$cup->name}</a></li>
+        </ul>
+    </div>
+</div>

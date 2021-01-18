@@ -31,7 +31,7 @@ class EnterResultPresenter extends BaseSignPresenter
         $onInsert[] = function () {
             $this->redirect('this');
         };
-        return $this->resultEnterControlFactory->create($this->cups->getActive(), null, $onInsert);
+        return $this->resultEnterControlFactory->create($this->cupid, null, $onInsert);
     }
 
     public function actionDefault(): void

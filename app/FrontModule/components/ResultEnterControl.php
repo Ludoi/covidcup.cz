@@ -46,7 +46,7 @@ class ResultEnterControl extends Control
         $this->user = $user;
         $this->cups = $cups;
         $this->userid = (int)$this->user->getId();
-        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
+        $this->racerid = $this->cups->getRacerid($this->cupid, $this->userid);
         $this->GPXQueue = $GPXQueue;
         $this->cache = new Cache($storage);
         $this->onInsert = $onInsert;
@@ -171,10 +171,10 @@ class ResultEnterControl extends Control
             } else {
                 $parts = explode(':', $values->time);
                 $time = (int)$parts[0] * 3600 + (int)$parts[1] * 60 + (int)$parts[2];
-                $correct = $this->results->isItemCorrect($this->cups->getActive(), (int)$values->raceid,
+                $correct = $this->results->isItemCorrect($this->cupid, (int)$values->raceid,
                     $this->racerid, $values->startTime, $time);
                 if ($correct) {
-                    $this->results->insertItem($this->cups->getActive(), (int)$values->raceid, $this->racerid, $values->startTime, $time);
+                    $this->results->insertItem($this->cupid, (int)$values->raceid, $this->racerid, $values->startTime, $time);
                     $this->cleanCache((int)$values->raceid);
                 } else {
                     $form->addError('Výsledek s podobným časem startu už je uložen');

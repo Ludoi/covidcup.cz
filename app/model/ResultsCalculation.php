@@ -19,7 +19,6 @@ class ResultsCalculation
 {
     private Cups $cups;
     private Results $results;
-    private int $cupid;
     private ResultsOverall $resultsOverall;
     private Cache $cache;
     private ResultsRacers $resultsRacers;
@@ -29,7 +28,6 @@ class ResultsCalculation
     {
         $this->cups = $cups;
         $this->results = $results;
-        $this->cupid = $this->cups->getActive();
         $this->resultsOverall = $resultsOverall;
         $this->cache = new Cache($storage);
         $this->resultsRacers = $resultsRacers;

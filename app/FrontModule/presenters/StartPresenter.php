@@ -36,12 +36,12 @@ class StartPresenter extends BaseSignPresenter
             $this->flashMessage($message, 'success');
             $this->redirect('Homepage:default');
         };
-        return $this->startControlFactory->create($onStart, $onStop);
+        return $this->startControlFactory->create($this->cupid, $onStart, $onStop);
     }
 
     public function actionDefault(): void
     {
         $now = new \DateTime();
-        $this->template->allowed = $this->cups->isDateValid($this->cups->getActive(), $now, false);
+        $this->template->allowed = $this->cups->isDateValid($this->cupid, $now, false);
     }
 }

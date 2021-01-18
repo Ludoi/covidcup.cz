@@ -30,7 +30,6 @@ class RoutePresenter extends BasePresenter
     private PlanControlFactory $planControlFactory;
     private ResultEnterControlFactory $resultEnterControlFactory;
     private ResultOrderControlFactory $resultOrderControlFactory;
-    private int $cupid;
     private int $routeid;
     private int $raceid;
     private Results $results;
@@ -46,7 +45,6 @@ class RoutePresenter extends BasePresenter
         $this->planControlFactory = $planControlFactory;
         $this->resultEnterControlFactory = $resultEnterControlFactory;
         $this->resultOrderControlFactory = $resultOrderControlFactory;
-        $this->cupid = $cups->getActive();
         $this->results = $results;
     }
 
@@ -82,7 +80,7 @@ class RoutePresenter extends BasePresenter
         }
         $this->template->routes = $this->cups->find($this->cupid)->related('cups_routes');
         $this->template->route = $route;
-        $categories = $this->cups->find($this->cups->getActive())->related('categories');
+        $categories = $this->cups->find($this->cupid)->related('categories');
         $this->template->times = [];
         $this->raceid = $this->cups->getRaceid($this->cupid, $this->routeid);
         foreach ($categories as $category) {

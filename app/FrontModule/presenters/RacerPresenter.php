@@ -26,10 +26,8 @@ class RacerPresenter extends BaseSignPresenter
     private Users $users;
     private PlanControlFactory $planControlFactory;
     private Cups $cups;
-    private int $cupid;
     private CupsRacers $cupsRacers;
     private ResultEnterControlFactory $resultEnterControlFactory;
-    private ?int $racerid;
     private Followers $followers;
 
     public function __construct(Users $users, PlanControlFactory $planControlFactory,
@@ -40,7 +38,6 @@ class RacerPresenter extends BaseSignPresenter
         $this->users = $users;
         $this->planControlFactory = $planControlFactory;
         $this->cups = $cups;
-        $this->cupid = $cups->getActive();
         $this->cupsRacers = $cupsRacers;
         $this->resultEnterControlFactory = $resultEnterControlFactory;
         $this->followers = $followers;
@@ -50,7 +47,6 @@ class RacerPresenter extends BaseSignPresenter
     {
         parent::startup();
         $this->userid = (int)$this->user->getId();
-        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
     }
 
     protected function createComponentPlanControl(): PlanControl
@@ -81,7 +77,7 @@ class RacerPresenter extends BaseSignPresenter
     public function actionDefault(?int $id): void
     {
         if (is_null($id)) {
-            $cupsRacer = $this->cupsRacers->findOneBy(['cups' => $this->cups->getActive(), 'userid' => $this->userid]);
+            $cupsRacer = $this->cupsRacers->findOneBy(['cups' => $this->cupid, 'userid' => $this->userid]);
             if (is_null($cupsRacer)) {
                 $this->flashMessage('Závodník nenalezen.');
                 $this->redirect('Homepage:');

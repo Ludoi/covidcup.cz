@@ -18,7 +18,6 @@ use App\ResultCupControlFactory;
 class ResultsPresenter extends BaseSignPresenter
 {
     private ResultCupControlFactory $resultCupControlFactory;
-    private ?int $cupid;
     private Cups $cups;
 
     public function __construct(ResultCupControlFactory $resultCupControlFactory, Cups $cups)
@@ -32,13 +31,8 @@ class ResultsPresenter extends BaseSignPresenter
         return $this->resultCupControlFactory->create($this->cupid);
     }
 
-    public function actionDefault(int $cupid = null): void
+    public function actionDefault(): void
     {
-        if (is_null($cupid)) {
-            $this->cupid = $this->cups->getActive();
-        } else {
-            $this->cupid = $cupid;
-        }
     }
 
 }

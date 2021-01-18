@@ -63,6 +63,7 @@ services:
 	- App\ResultEnterControlFactory
 	- App\ResultOrderControlFactory
 	- App\ResultCupControlFactory
+	- App\CupSelectionControlFactory
 	- App\StartControlFactory
 	- App\Console\WeatherDownloadCommand
 	- App\WeatherAssign

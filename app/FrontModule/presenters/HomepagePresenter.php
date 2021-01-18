@@ -7,6 +7,8 @@ use App\Articles;
 use App\ChatControl;
 use App\ChatControlFactory;
 use App\Cups;
+use App\CupSelectionControl;
+use App\CupSelectionControlFactory;
 use App\Messages;
 use App\PlanControl;
 use App\PlanControlFactory;
@@ -27,12 +29,13 @@ class HomepagePresenter extends BasePresenter {
     private ResultEnterControlFactory $resultEnterControlFactory;
     private Cups $cups;
     private Articles $articles;
-    private int $cupid;
     private Messages $messages;
+    private CupSelectionControlFactory $cupSelectionControlFactory;
 
     public function __construct(Routes $routes, ChatControlFactory $chatControlFactory,
                                 PlanControlFactory $planControlFactory,
                                 ResultEnterControlFactory $resultEnterControlFactory,
+                                CupSelectionControlFactory $cupSelectionControlFactory,
                                 Cups $cups, Articles $articles, Messages $messages)
     {
         $this->routes = $routes;
@@ -41,9 +44,8 @@ class HomepagePresenter extends BasePresenter {
         $this->resultEnterControlFactory = $resultEnterControlFactory;
         $this->cups = $cups;
         $this->articles = $articles;
-
-        $this->cupid = $cups->getActive();
         $this->messages = $messages;
+        $this->cupSelectionControlFactory = $cupSelectionControlFactory;
     }
 
     protected function createComponentChatControl(): ChatControl
@@ -70,12 +72,31 @@ class HomepagePresenter extends BasePresenter {
         return $this->resultEnterControlFactory->create($this->cupid, null, $onInsert);
     }
 
+    protected function createComponentCupSelectionControl(): CupSelectionControl
+    {
+        $onSelect = function ($cupid) {
+            $url = $this->link('Homepage:setCupid', $cupid);
+            $this->redirectUrl($url);
+        };
+        return $this->cupSelectionControlFactory->create($this->cupid, $onSelect);
+    }
+
     public function actionDefault()
     {
+        $this->template->cupActive = $this->cupActive;
         $this->template->article = $this->articles->findAll()->order('created DESC')->limit(1)->fetch();
     }
 
-    public function actionRules() {
+    public function actionSetCupid(?int $cupid)
+    {
+        if (!is_null($cupid)) {
+            $this->cupid = $cupid;
+        }
+        $this->redirect('Homepage:default');
+    }
+
+    public function actionRules()
+    {
         $this->template->routes = $this->cups->find($this->cupid)->related('cups_routes');
     }
 }

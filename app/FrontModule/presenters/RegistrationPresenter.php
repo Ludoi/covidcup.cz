@@ -75,7 +75,7 @@ class RegistrationPresenter extends BasePresenter
         if (!is_null($user)) {
             $this->users->getDatabase()->beginTransaction();
             $this->users->activate((int)$user->id, true);
-            $racer = $this->cupsRacers->insert(['cupid' => $this->cups->getActive(), 'userid' => (int)$user->id]);
+            $racer = $this->cupsRacers->insert(['cupid' => $this->cupid, 'userid' => (int)$user->id]);
             $year = (int)(new DateTime())->format('Y');
             $age = $year - $racer->ref('userid')->year;
             $category = $this->categories->getCategory((int)$racer->cupid, (string)$racer->ref('userid')->gender, $age);

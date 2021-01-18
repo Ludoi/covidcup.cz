@@ -30,8 +30,9 @@ class StartControl extends Control
     private Cache $cache;
     private $onStart;
     private $onStop;
+    private int $cupid;
 
-    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results, IStorage $storage, callable $onStart,
+    public function __construct(Cups $cups, Measurements $measurements, User $user, Results $results, IStorage $storage, int $cupid, callable $onStart,
                                 callable $onStop)
     {
         $this->measurements = $measurements;
@@ -41,6 +42,7 @@ class StartControl extends Control
         $this->onStart = $onStart;
         $this->onStop = $onStop;
         $this->cache = new Cache($storage);
+        $this->cupid = $cupid;
     }
 
     private function cleanCache(int $raceid): void
@@ -63,7 +65,7 @@ class StartControl extends Control
     public function createComponentPreStart(): Form
     {
         $form = new BootstrapForm();
-        $cup = $this->cups->find($this->cups->getActive());
+        $cup = $this->cups->find($this->cupid);
         $routes = [];
         foreach ($cup->related('cups_routes', 'cupid')->fetchAll() as $route) {
             $routes[$route->id] = $route->ref('routeid')->description;
@@ -108,10 +110,10 @@ class StartControl extends Control
             $values = $form->getValues();
             $now = new \DateTime();
             $userid = (int)$this->user->getId();
-            $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
+            $racerid = $this->cups->getRacerid($this->cupid, $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
-            $startDistance = $this->cups->getDistance($this->cups->getActive(), (int)$values->raceid,
+            $startDistance = $this->cups->getDistance($this->cupid, (int)$values->raceid,
                 $latitude, $longitude, true);
             $this->measurements->insertStart($racerid, (int)$values->raceid, $now, $latitude, $longitude, $startDistance);
             $this->flashMessage('Odstartováno!', 'success');
@@ -140,18 +142,18 @@ class StartControl extends Control
             $values = $form->getValues();
             $now = new \DateTime();
             $userid = (int)$this->user->getId();
-            $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
+            $racerid = $this->cups->getRacerid($this->cupid, $userid);
             $latitude = ($values->latitude != '') ? (float)$values->latitude : null;
             $longitude = ($values->longitude != '') ? (float)$values->longitude : null;
             $measurement = $this->measurements->findOneBy(['racerid' => $racerid, 'active' => true]);
-            $finishDistance = $this->cups->getDistance($this->cups->getActive(), (int)$measurement->raceid,
+            $finishDistance = $this->cups->getDistance($this->cupid, (int)$measurement->raceid,
                 $latitude, $longitude, false);
             $measurementid = $this->measurements->updateFinish($racerid, $now, $latitude, $longitude, $finishDistance);
             if (!is_null($measurementid)) {
                 $measurement = $this->measurements->find($measurementid);
                 if (!is_null($measurement)) {
                     $duration = (int)$measurement->finish_time->format('U') - (int)$measurement->start_time->format('U');
-                    $this->results->insert(['cupid' => $this->cups->getActive(), 'raceid' => $measurement->raceid,
+                    $this->results->insert(['cupid' => $this->cupid, 'raceid' => $measurement->raceid,
                         'racerid' => $racerid, 'start_time' => $measurement->start_time, 'time_seconds' => $duration,
                         'created' => $now, 'active' => true, 'guaranteed' => true, 'measurementid' => $measurementid]);
                     $this->cleanCache((int)$measurement->raceid);
@@ -169,7 +171,7 @@ class StartControl extends Control
     private function checkIsActive(): void
     {
         $userid = (int)$this->user->getId();
-        $racerid = $this->cups->getRacerid($this->cups->getActive(), $userid);
+        $racerid = $this->cups->getRacerid($this->cupid, $userid);
         $isActive = $this->measurements->isActive($racerid);
         $this->beforeStart = !$isActive;
     }

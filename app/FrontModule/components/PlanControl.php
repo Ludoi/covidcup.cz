@@ -46,7 +46,7 @@ class PlanControl extends Control
         $this->cups = $cups;
         $this->onlyOwn = $onlyOwn;
         $this->userid = (int)$this->user->getId();
-        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
+        $this->racerid = $this->cups->getRacerid($this->cupid, $this->userid);
         $this->cache = new Cache($storage);
         $this->onInsert = $onInsert;
     }

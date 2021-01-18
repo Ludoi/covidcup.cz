@@ -21,7 +21,6 @@ class StatisticsPresenter extends BasePresenter
     private Users $users;
     private Routes $routes;
     private Cups $cups;
-    private int $cupid;
     private Results $results;
 
     public function __construct(Users $users, Routes $routes, Cups $cups, Results $results)
@@ -29,11 +28,11 @@ class StatisticsPresenter extends BasePresenter
         $this->users = $users;
         $this->routes = $routes;
         $this->cups = $cups;
-        $this->cupid = $cups->getActive();
         $this->results = $results;
     }
 
     public function actionDefault() {
+        $this->template->cup = $this->selectedCup;
         $this->template->cacheid = 'statistics-main';
         $this->template->racersCount = $this->users->findBy(['active' => true])->count();
         $this->template->maleCount = $this->users->findBy(['active' => true, 'gender' => 'm'])->count();
@@ -42,7 +41,7 @@ class StatisticsPresenter extends BasePresenter
         $this->template->resultsCount = $this->results->findBy(['cupid' => $this->cupid])->count();
         $year = (int)(new \DateTime())->format('Y');
         $this->template->averageAge = $year - $this->users->findAll()->aggregation('AVG(year)');
-        $racersCount = $this->results->findBy(['cupid' => $this->cups->getActive()])->group('racerid')->count();
+        $racersCount = $this->results->findBy(['cupid' => $this->cupid])->group('racerid')->count();
         $this->template->averageRaces = ($racersCount > 0) ? $this->template->resultsCount / $racersCount : 0;
     }
 }

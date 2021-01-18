@@ -59,6 +59,7 @@ class ResultCupControl extends Control
         if (is_null($this->catid)) {
             $this->catid = 0;
         }
+        $this->template->cup = $this->cups->find($this->cupid);
         $this->template->cacheid = "overallResults_{$this->cupid}_{$this->sliceid}_{$this->catid}";
         $this->template->tags = ['overallResults', "overallResults_{$this->cupid}",
             "overallResults_{$this->cupid}_{$this->sliceid}_{$this->catid}"];

@@ -20,8 +20,6 @@ class ComparisonPresenter extends BaseSignPresenter
 {
     private ResultsRacers $resultsRacers;
     private Followers $followers;
-    private int $userid;
-    private int $racerid;
     private Cups $cups;
     private CupsRoutes $cupsRoutes;
 
@@ -31,13 +29,6 @@ class ComparisonPresenter extends BaseSignPresenter
         $this->followers = $followers;
         $this->cups = $cups;
         $this->cupsRoutes = $cupsRoutes;
-    }
-
-    public function startup()
-    {
-        parent::startup();
-        $this->userid = (int)$this->user->getId();
-        $this->racerid = $this->cups->getRacerid($this->cups->getActive(), $this->userid);
     }
 
     public function actionDefault()
@@ -64,6 +55,7 @@ class ComparisonPresenter extends BaseSignPresenter
             $races[$myResult->ref('resultid')->raceid] = $myResult->ref('resultid')->raceid;
             $followersResults[$this->racerid][$myResult->ref('resultid')->raceid][] = $myResult;
         }
+        $this->template->cup = $this->selectedCup;
         $this->template->races = $this->cupsRoutes->findBy(['cups_routes.id' => $races])->select('cups_routes.id, legend_name, routeid.description');
         $this->template->results = $followersResults;
         $this->template->followersList = $followersList;
